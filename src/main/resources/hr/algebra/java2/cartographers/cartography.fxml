@@ -9,7 +9,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="600.0" style="-fx-background-image: url(https://cdn.pixabay.com/photo/2024/07/09/08/37/paper-8882753_1280.jpg);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1000.0" prefWidth="600.0" style="-fx-background-image: url(https://cdn.pixabay.com/photo/2024/07/09/08/37/paper-8882753_1280.jpg);" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.algebra.java2.cartographers.controllers.CartographyController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -266,60 +266,122 @@
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="1" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="1" GridPane.valignment="TOP">
+        <Label text="1" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="2" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="2" GridPane.valignment="TOP">
+        <Label text="2" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="3" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="3" GridPane.valignment="TOP">
+        <Label text="3" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="4" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="4" GridPane.valignment="TOP">
+        <Label text="4" textAlignment="CENTER" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="5" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="5" GridPane.valignment="TOP">
+        <Label text="5" textAlignment="CENTER" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="6" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="6" GridPane.valignment="TOP">
+        <Label text="6" textAlignment="CENTER" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="7" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="7" GridPane.valignment="TOP">
+        <Label text="7" textAlignment="CENTER" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="8" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="8" GridPane.valignment="TOP">
+        <Label text="8" textAlignment="CENTER" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="9" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="9" GridPane.valignment="TOP">
+        <Label text="9" textAlignment="CENTER" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="10" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="10" GridPane.valignment="TOP">
+        <Label text="10" textAlignment="CENTER" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-        <Label text="11" textAlignment="CENTER" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.columnIndex="11" GridPane.valignment="TOP">
+        <Label text="11" textAlignment="CENTER" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.rowIndex="16" GridPane.valignment="TOP">
             <font>
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
+        <TextField fx:id="tfNum1901" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="0" GridPane.rowIndex="19">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum2001" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="0" GridPane.rowIndex="20">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum1902" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="1" GridPane.rowIndex="19">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum2002" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="1" GridPane.rowIndex="20">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum1903" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="2" GridPane.rowIndex="19" GridPane.rowSpan="2">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="3.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum1904" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="3" GridPane.rowIndex="19">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum2004" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="3" GridPane.rowIndex="20">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum1905" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="4" GridPane.rowIndex="19">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum2005" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="4" GridPane.rowIndex="20">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <TextField fx:id="tfNum1906" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="0" GridPane.columnIndex="5" GridPane.rowIndex="19" GridPane.rowSpan="2">
+            <GridPane.margin>
+                <Insets bottom="2.0" left="2.0" right="3.0" top="2.0" />
+            </GridPane.margin>
+        </TextField>
+        <Label text="+" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="CENTER"
+               GridPane.rowIndex="19" GridPane.rowSpan="2" GridPane.valignment="CENTER">
+            <font>
+                <Font name="System Bold" size="14.0" />
+            </font>
+        </Label>
+      <Slider blockIncrement="1.0" majorTickUnit="2.0" max="14.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="2" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="17" GridPane.valignment="CENTER" />
+      <Label text="Coins:" GridPane.columnIndex="1" GridPane.rowIndex="17">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
     </children>
 </GridPane>
