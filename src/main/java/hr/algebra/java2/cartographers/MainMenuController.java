@@ -21,7 +21,7 @@ public class MainMenuController {
             Parent root = fxmlLoader.load();
             Stage stage = new Stage();
             stage.setTitle("Singleplayer");
-            stage.setScene(new Scene(root));
+            stage.setScene(new Scene(root, 600, 1000));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
