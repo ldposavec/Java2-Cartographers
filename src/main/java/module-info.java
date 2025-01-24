@@ -8,6 +8,7 @@ module hr.algebra.java2.cartographers {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
+    requires annotations;
 
     opens hr.algebra.java2.cartographers to javafx.fxml;
     exports hr.algebra.java2.cartographers;

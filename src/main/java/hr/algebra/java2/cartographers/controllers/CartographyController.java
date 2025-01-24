@@ -9,12 +9,17 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 public class CartographyController {
     @FXML
@@ -319,6 +324,9 @@ public class CartographyController {
     private int sum = 0;
     private ArrayList<CardsBase> exploreDeck;
     private CardsBase drawnCard;
+    private int terrainIterator = 0;
+    private int shapeIterator = 0;
+    private int rotationIterator = 0;
 
     public void initialize() {
         addNumericValidationListener(tfNum1900);
@@ -343,6 +351,24 @@ public class CartographyController {
 
         initializeMountains();
         initializeExploreDeck();
+
+    }
+
+    public void addKeyListeners() {
+        Scene scene = gpMain.getScene();
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.TAB) {
+                e.consume();
+                handleTabPress();
+            }
+        });
+    }
+
+    private void handleTabPress() {
+        terrainIterator++;
+        if (terrainIterator >= drawnCard.getTerrainType().length) {
+            terrainIterator = 0;
+        }
     }
 
     private void initializeExploreDeck() {
@@ -394,7 +420,8 @@ public class CartographyController {
                             add("W");
                             add("N");
                         }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                        add("X");}}, false)})
+                    add("X");
+                }}, false)})
                 .build();
         CardsBase forgottenForest = new CardsBase.Builder()
                 .setPoints(1)
@@ -413,8 +440,8 @@ public class CartographyController {
                             add("E");
                             add("S");
                         }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                        add("X");
-                        }}, false)})
+                    add("X");
+                }}, false)})
                 .build();
         CardsBase orchard = new CardsBase.Builder()
                 .setPoints(2)
@@ -427,7 +454,8 @@ public class CartographyController {
                         add("E");
                         add("E");
                         add("S");
-                    }}, false), new ShapeOnMap(new ArrayList<String>() {{
+                    }
+                }, false), new ShapeOnMap(new ArrayList<String>() {{
                     add("X");
                 }}, false)})
                 .build();
@@ -448,7 +476,7 @@ public class CartographyController {
                             add("S");
                             add("E");
                         }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                        add("X");
+                    add("X");
                 }}, false)})
                 .build();
         CardsBase riftLands = new CardsBase.Builder()
@@ -511,7 +539,7 @@ public class CartographyController {
                             add("E");
                             add("N");
                         }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                        add("X");
+                    add("X");
                 }}, false)})
                 .build();
         CardsBase templeRuins = new CardsBase.Builder()
@@ -646,47 +674,52 @@ public class CartographyController {
                 new BackgroundImage(new Image(getClass().getResource("/img/mountain-icon-hires.PNG").toExternalForm()
                         , btnMapB4.heightProperty().doubleValue(), btnMapB4.widthProperty().doubleValue(), false,
                         true, true),
-                BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
                         new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
         Background mountain = new Background(mountainIcon);
 
         btnMapB4.setBackground(mountain);
+        btnMapB4.setDisable(true);
         btnMapC9.setBackground(mountain);
+        btnMapC9.setDisable(true);
         btnMapF6.setBackground(mountain);
+        btnMapF6.setDisable(true);
         btnMapI3.setBackground(mountain);
+        btnMapI3.setDisable(true);
         btnMapJ8.setBackground(mountain);
+        btnMapJ8.setDisable(true);
     }
 
     private void addNumericValidationListener(TextField textField) {
         textField.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    String s = textField.getText();
-                    char[] chs = s.toCharArray();
-                    System.out.println("Length:" + oldValue.length() + "  " + newValue.length() + " " + s);
-                    StringBuilder sb = new StringBuilder();
-                    Boolean isNum = true;
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                String s = textField.getText();
+                char[] chs = s.toCharArray();
+                System.out.println("Length:" + oldValue.length() + "  " + newValue.length() + " " + s);
+                StringBuilder sb = new StringBuilder();
+                Boolean isNum = true;
 
-                    for (char ch : chs) {
-                        if (!(ch >= '0' && ch <= '9')) {
-                            textField.setText(oldValue);
-                            isNum = false;
-                            break;
-                        }
-                        sb.append(ch);
+                for (char ch : chs) {
+                    if (!(ch >= '0' && ch <= '9')) {
+                        textField.setText(oldValue);
+                        isNum = false;
+                        break;
                     }
-
-                    if (isNum) {
-                        lastNum = Integer.parseInt(sb.toString());
-                        calculateTfNum1902();
-                        calculateTfNum1905();
-                        calculateTfNum1908();
-                        calculateTfNum1911();
-                        calculateTfNum1912();
-                    }
+                    sb.append(ch);
                 }
-            });
-        }
+
+                if (isNum) {
+                    lastNum = Integer.parseInt(sb.toString());
+                    calculateTfNum1902();
+                    calculateTfNum1905();
+                    calculateTfNum1908();
+                    calculateTfNum1911();
+                    calculateTfNum1912();
+                }
+            }
+        });
+    }
 
     private void calculateTfNum1912() {
         sum += Integer.parseInt(tfNum1902.getText());
@@ -742,11 +775,11 @@ public class CartographyController {
         dialogContent.append("Points: " + drawnCard.getPoints() + "\n");
 //        if(terrainTypes.length == 1) dialogContent.append("Terrain type: " + terrainTypes[0] + "\n");
 //        else {
-            dialogContent.append("Terrain types: ");
-            for (TerrainType terrainType : terrainTypes) {
-                dialogContent.append(terrainType + " ");
-            }
-            dialogContent.append("\n");
+        dialogContent.append("Terrain types: ");
+        for (TerrainType terrainType : terrainTypes) {
+            dialogContent.append(terrainType + " ");
+        }
+        dialogContent.append("\n");
 //        }
         dialogContent.append("Available shapes: ");
         for (ShapeOnMap shape : drawnCard.getShapes()) {
@@ -756,153 +789,169 @@ public class CartographyController {
 
         exploreDeck.removeFirst();
 
-        lblTerrain.setText("Terrain: " + drawnCard.getTerrainType()[0]);
-        lblShape.setText("Shape: " + drawnCard.getShapes()[0].getDirections());
-        lblRotation.setText("Rotation: 0");
+        lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString());
+        lblShape.setText(drawnCard.getShapes()[0].getDirections().toString());
+        lblRotation.setText("0 degrees");
+
+        terrainIterator = 0;
+        addKeyListeners();
     }
 
     public void placeTerrain(ActionEvent actionEvent) {
         Button button = (Button) actionEvent.getSource();
-        if(checkLegallity(button)) {
-
-        }
-        else {
+        if (!checkLegallity(button)) {
             DialogUtils.showDialog("Illegal move", "You can't place that terrain there", Alert.AlertType.ERROR);
         }
     }
 
     private boolean checkLegallity(Button button) {
+        ArrayList<Button> buttons = new ArrayList<>();
+        buttons.add(button);
+        if (drawnCard.getShapes()[0].getDirections().size() == 1) {
+            setIconToButton(button);
+            return true;
+        }
+        Boolean isLegal = false;
+        Boolean skipButton = false;
+        int row = Character.toUpperCase(button.getId().charAt(6)) - 'A' + 1;
+        int col;
+        if (button.getId().length() != 8) col = 10 + Character.getNumericValue(button.getId().charAt(8));
+        else col = Character.getNumericValue(button.getId().charAt(7));
+
         for (String direction : drawnCard.getShapes()[0].getDirections()) {
-            switch (direction) {
-            case "N":
-                // Extract row and column from the button's ID
-                int row = Character.getNumericValue(button.getId().charAt(6)); // Assuming the row is encoded in the 7th character
-                int col = Character.getNumericValue(button.getId().charAt(7)); // Assuming the column is encoded in the 8th character
-
-                // Check if the button is at the topmost row (row 0)
-                if (row == 0) {
-                    return false;
-                }
-
-                // Find the button in the row above
-                for (Node node : gpMain.getChildren()) {
-                    if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null
-                            && GridPane.getRowIndex(node) == row - 1
-                            && GridPane.getColumnIndex(node) == col) {
-
-                        Button aboveButton = (Button) node;
-
-                        // Check if the button is not disabled
-                        if (!aboveButton.isDisable()) {
-                            return true; // Non-disabled button found above
-                        }
-                        break;
-                    }
-                }
-
-                return false; // No non-disabled button found above
-                case "E":
-                    int rowE = Character.getNumericValue(button.getId().charAt(6));
-                    int colE = Character.getNumericValue(button.getId().charAt(7));
-
-                    // Check if the button is at the rightmost column
-                    if (colE == gpMain.getColumnCount() - 1) {
-                        return false;
-                    }
-
-                    // Check if there's a non-disabled button to the right
-                    for (Node node : gpMain.getChildren()) {
-                        if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null
-                                && GridPane.getRowIndex(node) == rowE
-                                && GridPane.getColumnIndex(node) == colE + 1) {
-
-                            Button rightButton = (Button) node;
-                            return !rightButton.isDisable();
-                        }
-                    }
-                    return false;
-
-                case "S":
-                    int rowS = Character.getNumericValue(button.getId().charAt(6));
-                    int colS = Character.getNumericValue(button.getId().charAt(7));
-
-                    // Check if the button is at the bottommost row
-                    if (rowS == gpMain.getRowCount() - 1) {
-                        return false;
-                    }
-
-                    // Check if there's a non-disabled button below
-                    for (Node node : gpMain.getChildren()) {
-                        if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null
-                                && GridPane.getRowIndex(node) == rowS + 1
-                                && GridPane.getColumnIndex(node) == colS) {
-
-                            Button belowButton = (Button) node;
-                            return !belowButton.isDisable();
-                        }
-                    }
-                    return false;
-
-                case "W":
-                    int rowW = Character.getNumericValue(button.getId().charAt(6));
-                    int colW = Character.getNumericValue(button.getId().charAt(7));
-
-                    // Check if the button is at the leftmost column
-                    if (colW == 0) {
-                        return false;
-                    }
-
-                    // Check if there's a non-disabled button to the left
-                    for (Node node : gpMain.getChildren()) {
-                        if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null
-                                && GridPane.getRowIndex(node) == rowW
-                                && GridPane.getColumnIndex(node) == colW - 1) {
-
-                            Button leftButton = (Button) node;
-                            return !leftButton.isDisable();
-                        }
-                    }
-                    return false;
-
-                case "O":
-                    int currentRow = Character.getNumericValue(button.getId().charAt(6));
-                    int currentCol = Character.getNumericValue(button.getId().charAt(7));
-                    for (int i = 0; drawnCard.getShapes()[0].getDirections().size() > i; i++) {
-                        if (drawnCard.getShapes()[0].getDirections().get(i) == "O") {
-                            i++;
-                            for (int j = 0; j < i; j++) {
-                                switch (drawnCard.getShapes()[0].getDirections().get(i)) {
-                                    case "N":
-                                        currentRow -= 1; // Move up
-                                        break;
-                                    case "E":
-                                        currentCol += 1; // Move right
-                                        break;
-                                    case "S":
-                                        currentRow += 1; // Move down
-                                        break;
-                                    case "W":
-                                        currentCol -= 1; // Move left
-                                        break;
-                                }
-                            }
-
-                            // Check if the final target position exists and has a non-disabled button
-                            for (Node node : gpMain.getChildren()) {
-                                if (GridPane.getRowIndex(node) != null && GridPane.getColumnIndex(node) != null
-                                        && GridPane.getRowIndex(node) == currentRow
-                                        && GridPane.getColumnIndex(node) == currentCol) {
-
-                                    Button targetButton = (Button) node;
-                                    return !targetButton.isDisable();
-                                }
-                            }
-                            return false;
-                        }
+            System.out.println("Direction: " + direction);
+            if (direction == "O") {
+                skipButton = true;
+                continue;
             }
+            Map<Boolean, Map<String, Integer>> result = checkIfDisabled(direction, row, col, buttons);
+            if (result != null) {
+                if (skipButton) {
+                    buttons.removeLast();
+                    skipButton = false;
+                }
+                if (result.containsKey(true)) {
+                    isLegal = true;
+                    if (result.get(true).get("row") != null) {
+                        row = result.get(true).get("row");
+                    } else col = result.get(true).get("col");
+                } else {
+                    if (!skipButton) {
+                        isLegal = false;
+                        return isLegal;
+                    }
+                }
             }
         }
-        return true;
+        if (isLegal) {
+            for (Button buttonDisable : buttons) {
+                setIconToButton(buttonDisable);
+                buttonDisable.setDisable(true);
+            }
+        }
+        return isLegal;
+    }
+
+    private void setIconToButton(Button iconToButton) {
+        TerrainType terrainType = drawnCard.getTerrainType()[terrainIterator];
+        BackgroundImage icon =
+                new BackgroundImage(new Image(getClass().getResource("/img/" + terrainType.toString().toLowerCase() +
+                        "-icon-hires" +
+                        ".PNG").toExternalForm()
+                        , btnMapB4.heightProperty().doubleValue(), btnMapB4.widthProperty().doubleValue(), false,
+                        true, true),
+                        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                        new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
+        Background bgIcon = new Background(icon);
+
+        iconToButton.setBackground(bgIcon);
+    }
+
+
+    @Nullable
+    private Map<Boolean, Map<String, Integer>> checkIfDisabled(String direction, int row, int col, ArrayList<Button> buttons) {
+        if (direction.equals("N")) {
+            return checkIfDisabledNorth(row, col, buttons);
+        } else if (direction.equals("E")) {
+            return checkIfDisabledEast(row, col, buttons);
+        }
+        else if (direction.equals("S")) {
+            return checkIfDisabledSouth(row, col, buttons);
+        } else if (direction.equals("W")) {
+            return checkIfDisabledWest(row, col, buttons);
+        }
+        return null;
+    }
+
+
+    @Nullable
+    private Map<Boolean, Map<String, Integer>> checkIfDisabledNorth(int row, int col, ArrayList<Button> buttons) {
+        for (Node node : gpMain.getChildren()) {
+            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 2) + col)) {
+
+                if (buttonFound != null && !buttonFound.isDisable()) {
+                    buttons.add(buttonFound);
+                    return Map.of(true, Map.of("row", row - 1));
+                } else {
+                    return Map.of(false, Map.of("row", row));
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Map<Boolean, Map<String, Integer>> checkIfDisabledEast(int row, int col, ArrayList<Button> buttons) {
+        for (Node node : gpMain.getChildren()) {
+            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col + 1))) {
+
+                if (buttonFound != null && !buttonFound.isDisable()) {
+                    buttons.add(buttonFound);
+                    return Map.of(true, Map.of("col", col + 1));
+                }
+                else {
+                    return Map.of(false, Map.of("col", col));
+
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Map<Boolean, Map<String, Integer>> checkIfDisabledSouth(int row, int col, ArrayList<Button> buttons) {
+        for (Node node : gpMain.getChildren()) {
+            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row) + col)) {
+
+                if (buttonFound != null && !buttonFound.isDisable()) {
+                    buttons.add(buttonFound);
+                    return Map.of(true, Map.of("row", row + 1));
+                }
+                else {
+                    return Map.of(false, Map.of("row", row));
+
+                }
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    private Map<Boolean, Map<String, Integer>> checkIfDisabledWest(int row, int col, ArrayList<Button> buttons) {
+        for (Node node : gpMain.getChildren()) {
+            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col - 1))) {
+
+                if (buttonFound != null && !buttonFound.isDisable()) {
+                    buttons.add(buttonFound);
+                    return Map.of(true, Map.of("col", col - 1));
+                }
+                else {
+                    return Map.of(false, Map.of("col", col));
+
+                }
+            }
+        }
+        return null;
     }
 }
 
