@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.effect.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
@@ -439,7 +440,7 @@
                 <Font name="System Bold" size="14.0" />
             </font>
         </Label>
-      <Slider blockIncrement="1.0" majorTickUnit="2.0" max="14.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="2" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="17" GridPane.valignment="CENTER" />
+      <Slider fx:id="slCoin" blendMode="DIFFERENCE" blockIncrement="1.0" disable="true" majorTickUnit="2.0" max="14.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnIndex="2" GridPane.columnSpan="10" GridPane.halignment="CENTER" GridPane.rowIndex="17" GridPane.valignment="CENTER" />
       <Label text="Coins:" GridPane.columnIndex="1" GridPane.rowIndex="17">
          <font>
             <Font name="System Bold" size="12.0" />
@@ -493,8 +494,88 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Label fx:id="lblTerrain" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-      <Label fx:id="lblShape" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-      <Label fx:id="lblRotation" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label fx:id="lblTerrain" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label fx:id="lblShape" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label fx:id="lblRotation" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label text="A" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="B" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="B" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="C" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="C" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="D" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="D" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="A" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Coins" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Coins" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Coins" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Coins" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Mon" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Mon" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Mon" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
+      <Label text="Mon" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="21" GridPane.valignment="TOP">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Label>
     </children>
 </GridPane>

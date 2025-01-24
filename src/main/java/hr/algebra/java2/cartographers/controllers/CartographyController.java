@@ -352,16 +352,42 @@ public class CartographyController {
         initializeMountains();
         initializeExploreDeck();
 
+        gpMain.addEventFilter(KeyEvent.KEY_PRESSED, this::addKeyListeners);
     }
 
-    public void addKeyListeners() {
-        Scene scene = gpMain.getScene();
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-            if (e.getCode() == KeyCode.TAB) {
-                e.consume();
+    public void addKeyListeners(KeyEvent event) {
+//        Scene scene = gpMain.getScene();
+//        scene.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if (event.getCode() == KeyCode.TAB) {
                 handleTabPress();
+                event.consume();
             }
-        });
+            if (event.getCode() == KeyCode.SHIFT) {
+                handleShiftPress();
+                event.consume();
+            }
+            if (event.getCode() == KeyCode.CONTROL) {
+                handleControlPress();
+                event.consume();
+            }
+        }
+
+    private void handleControlPress() {
+        drawnCard.getShapes()[shapeIterator].rotateClockwise();
+        lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString());
+        rotationIterator += 90;
+        if (rotationIterator >= 360) {
+            rotationIterator = 0;
+        }
+        lblRotation.setText(rotationIterator + " degrees");
+    }
+
+    private void handleShiftPress() {
+        shapeIterator++;
+        if (shapeIterator >= drawnCard.getShapes().length) {
+            shapeIterator = 0;
+        }
+        lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString());
     }
 
     private void handleTabPress() {
@@ -369,6 +395,8 @@ public class CartographyController {
         if (terrainIterator >= drawnCard.getTerrainType().length) {
             terrainIterator = 0;
         }
+        System.out.println("Terrain iterator: " + terrainIterator);
+        lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString());
     }
 
     private void initializeExploreDeck() {
@@ -486,8 +514,6 @@ public class CartographyController {
                         TerrainType.WATER, TerrainType.MONSTER})
                 .setNumberOfShapes(2)
                 .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
                     add("X");
                 }}, false)})
                 .build();
@@ -773,14 +799,11 @@ public class CartographyController {
         dialogContent.append("You have drawn a card\n");
         dialogContent.append("Title: " + drawnCard.getTitle() + "\n");
         dialogContent.append("Points: " + drawnCard.getPoints() + "\n");
-//        if(terrainTypes.length == 1) dialogContent.append("Terrain type: " + terrainTypes[0] + "\n");
-//        else {
         dialogContent.append("Terrain types: ");
         for (TerrainType terrainType : terrainTypes) {
             dialogContent.append(terrainType + " ");
         }
         dialogContent.append("\n");
-//        }
         dialogContent.append("Available shapes: ");
         for (ShapeOnMap shape : drawnCard.getShapes()) {
             dialogContent.append(shape.getDirections() + " ");
@@ -790,24 +813,24 @@ public class CartographyController {
         exploreDeck.removeFirst();
 
         lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString());
-        lblShape.setText(drawnCard.getShapes()[0].getDirections().toString());
+        lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString());
         lblRotation.setText("0 degrees");
 
         terrainIterator = 0;
-        addKeyListeners();
     }
 
     public void placeTerrain(ActionEvent actionEvent) {
         Button button = (Button) actionEvent.getSource();
         if (!checkLegallity(button)) {
             DialogUtils.showDialog("Illegal move", "You can't place that terrain there", Alert.AlertType.ERROR);
+            return;
         }
     }
 
     private boolean checkLegallity(Button button) {
         ArrayList<Button> buttons = new ArrayList<>();
         buttons.add(button);
-        if (drawnCard.getShapes()[0].getDirections().size() == 1) {
+        if (drawnCard.getShapes()[shapeIterator].getDirections().size() == 1) {
             setIconToButton(button);
             return true;
         }
@@ -818,7 +841,7 @@ public class CartographyController {
         if (button.getId().length() != 8) col = 10 + Character.getNumericValue(button.getId().charAt(8));
         else col = Character.getNumericValue(button.getId().charAt(7));
 
-        for (String direction : drawnCard.getShapes()[0].getDirections()) {
+        for (String direction : drawnCard.getShapes()[shapeIterator].getDirections()) {
             System.out.println("Direction: " + direction);
             if (direction == "O") {
                 skipButton = true;
