@@ -15,9 +15,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -319,6 +321,22 @@ public class CartographyController {
     private Label lblRotation;
     @FXML
     private GridPane gpMain;
+    @FXML
+    private Label lblScoringA;
+    @FXML
+    private Label lblScoringB;
+    @FXML
+    private Label lblScoringC;
+    @FXML
+    private Label lblScoringD;
+    @FXML
+    private Label lblSeason;
+    @FXML
+    private Label lblTurnCount;
+    @FXML
+    private Button btnScoringInfo;
+    @FXML
+    private Slider slCoin;
 
     private int lastNum = 0;
     private int sum = 0;
@@ -327,6 +345,15 @@ public class CartographyController {
     private int terrainIterator = 0;
     private int shapeIterator = 0;
     private int rotationIterator = 0;
+    private int turnCount = 0;
+    private Boolean hasCoin = false;
+    //    private ArrayList<Button> mountains = new ArrayList<>(Arrays.asList(btnMapB4, btnMapC9, btnMapF6, btnMapI3, btnMapJ8));
+    private ArrayList<Button> mountains = new ArrayList<>();
+    private ArrayList<String> scoringCards = new ArrayList<>(Arrays.asList("Earn one reputation star for each row and" +
+                    " column with at least one forest space. The same forest space may be scored in a row and a column.",
+            "Earn two reputation stars for each water space adjacent to a mountain space. Earn one reputation star " +
+                    "for each farm space adjacent to a mountain space.", " Earn eight reputation stars for each " +
+                    "cluster of six or more village spaces.", "Earn six reputation stars for each complete row or complete column of filled spaces."));
 
     public void initialize() {
         addNumericValidationListener(tfNum1900);
@@ -353,24 +380,27 @@ public class CartographyController {
         initializeExploreDeck();
 
         gpMain.addEventFilter(KeyEvent.KEY_PRESSED, this::addKeyListeners);
+        Collections.shuffle(scoringCards);
+
+        lblSeason.setText("Spring");
     }
 
     public void addKeyListeners(KeyEvent event) {
 //        Scene scene = gpMain.getScene();
 //        scene.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
-            if (event.getCode() == KeyCode.TAB) {
-                handleTabPress();
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.SHIFT) {
-                handleShiftPress();
-                event.consume();
-            }
-            if (event.getCode() == KeyCode.CONTROL) {
-                handleControlPress();
-                event.consume();
-            }
+        if (event.getCode() == KeyCode.TAB) {
+            handleTabPress();
+            event.consume();
         }
+        if (event.getCode() == KeyCode.SHIFT) {
+            handleShiftPress();
+            event.consume();
+        }
+        if (event.getCode() == KeyCode.CONTROL) {
+            handleControlPress();
+            event.consume();
+        }
+    }
 
     private void handleControlPress() {
         drawnCard.getShapes()[shapeIterator].rotateClockwise();
@@ -704,6 +734,12 @@ public class CartographyController {
                         new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
         Background mountain = new Background(mountainIcon);
 
+        mountains.add(btnMapB4);
+        mountains.add(btnMapC9);
+        mountains.add(btnMapF6);
+        mountains.add(btnMapI3);
+        mountains.add(btnMapJ8);
+
         btnMapB4.setBackground(mountain);
         btnMapB4.setDisable(true);
         btnMapC9.setBackground(mountain);
@@ -793,6 +829,12 @@ public class CartographyController {
     }
 
     public void revealExploreCard(ActionEvent actionEvent) {
+        if (exploreDeck.isEmpty()) {
+            DialogUtils.showDialog("Deck is empty", "You have explored all cards. \n Shuffling deck...",
+                    Alert.AlertType.INFORMATION);
+            initializeExploreDeck();
+            return;
+        }
         drawnCard = exploreDeck.getFirst();
         TerrainType[] terrainTypes = drawnCard.getTerrainType();
         StringBuilder dialogContent = new StringBuilder();
@@ -806,6 +848,9 @@ public class CartographyController {
         dialogContent.append("\n");
         dialogContent.append("Available shapes: ");
         for (ShapeOnMap shape : drawnCard.getShapes()) {
+            if (shape.getHasCoin()) {
+                dialogContent.append("Coin on ");
+            }
             dialogContent.append(shape.getDirections() + " ");
         }
         DialogUtils.showDialog("Explore Card", dialogContent.toString(), Alert.AlertType.INFORMATION);
@@ -825,6 +870,125 @@ public class CartographyController {
             DialogUtils.showDialog("Illegal move", "You can't place that terrain there", Alert.AlertType.ERROR);
             return;
         }
+        else {
+            hasCoin = drawnCard.getShapes()[shapeIterator].getHasCoin();
+            if (hasCoin) {
+                slCoin.adjustValue(slCoin.getValue() + 1);
+                hasCoin = false;
+            }
+            if (checkMountainAdjacents()) {
+                slCoin.adjustValue(slCoin.getValue() + 1);
+            }
+            turnCount += drawnCard.getPoints();
+            lblTurnCount.setText(String.valueOf(turnCount));
+            checkEndOfSeason();
+        }
+    }
+
+    private boolean checkMountainAdjacents() {
+        int allFilled = 0;
+//        btnMapB4.setDisable(false);
+//        btnMapC9.setDisable(false);
+//        btnMapF6.setDisable(false);
+//        btnMapI3.setDisable(false);
+//        btnMapJ8.setDisable(false);
+        for (Button btnMountain : mountains) {
+            int row = Character.toUpperCase(btnMountain.getId().charAt(6)) - 'A' + 1;
+            int col = Character.getNumericValue(btnMountain.getId().charAt(7));
+            for (Node node : gpMain.getChildren()) {
+                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 2) + col) && button.isDisabled()) {
+                    allFilled++;
+                    if (allFilled == 4) {
+                        mountains.remove(btnMountain);
+                        return true;
+                    }
+                }
+                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row) + col) && button.isDisabled()) {
+                    allFilled++;
+                    if (allFilled == 4) {
+                        mountains.remove(btnMountain);
+                        return true;
+                    }
+                }
+                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col + 1)) && button.isDisabled()) {
+                    allFilled++;
+                    if (allFilled == 4) {
+                        mountains.remove(btnMountain);
+                        return true;
+                    }
+                }
+                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col - 1)) && button.isDisabled()) {
+                    allFilled++;
+                    if (allFilled == 4) {
+                        mountains.remove(btnMountain);
+                        return true;
+                    }
+                }
+//                else return false;
+            }
+        }
+//        btnMapB4.setDisable(true);
+//        btnMapC9.setDisable(true);
+//        btnMapF6.setDisable(true);
+//        btnMapI3.setDisable(true);
+//        btnMapJ8.setDisable(true);
+        return false;
+    }
+
+    private void checkEndOfSeason() {
+        if (lblSeason.getText().equals("Spring") && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
+            lblSeason.setText("Summer");
+            DialogUtils.showDialog("End of season", "End of Spring season. \n" +
+                            "Summer season has started. Make sure to count your points according to 'A' and 'B' scoring cards",
+                    Alert.AlertType.INFORMATION);
+            lblTurnCount.setText("0");
+            turnCount = 0;
+            lblScoringC.setFont(lblScoringA.getFont());
+            lblScoringA.setFont(lblScoringD.getFont());
+        }
+        if (lblSeason.getText().equals("Summer") && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
+            lblSeason.setText("Fall");
+            DialogUtils.showDialog("End of season", "End of Summer season. \n" +
+                            "Fall season has started. Make sure to count your points according to 'B' and 'C' scoring" +
+                            " cards",
+                    Alert.AlertType.INFORMATION);
+            lblTurnCount.setText("0");
+            turnCount = 0;
+            lblScoringD.setFont(lblScoringB.getFont());
+            lblScoringB.setFont(lblScoringA.getFont());
+        }
+        if (lblSeason.getText().equals("Fall") && (lblTurnCount.getText().equals("7") || lblTurnCount.getText().equals(
+                "8"))) {
+            lblSeason.setText("Winter");
+            DialogUtils.showDialog("End of season", "End of Fall season. \n" +
+                            "Winter season has started. Make sure to count your points according to 'C' and 'D' " +
+                            "scoring" +
+                            " cards",
+                    Alert.AlertType.INFORMATION);
+            lblTurnCount.setText("0");
+            turnCount = 0;
+            lblScoringA.setFont(lblScoringC.getFont());
+            lblScoringC.setFont(lblScoringB.getFont());
+        }
+        if (lblSeason.getText().equals("Winter") && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
+            DialogUtils.showDialog("End of season", "End of Winter season. \n" +
+                            "The game has ended! Make sure to count your points according to 'D' and 'A' scoring" +
+                            " cards",
+                    Alert.AlertType.INFORMATION);
+            calculateTfNum1912();
+            disableAllButtons();
+        }
+    }
+
+    private void disableAllButtons() {
+        for (Node node : gpMain.getChildren()) {
+            if (node instanceof Button button) {
+                if (button.getId().equals(btnScoringInfo.getId())) {
+                    continue;
+                }
+                button.setDisable(true);
+            }
+        }
     }
 
     private boolean checkLegallity(Button button) {
@@ -832,6 +996,7 @@ public class CartographyController {
         buttons.add(button);
         if (drawnCard.getShapes()[shapeIterator].getDirections().size() == 1) {
             setIconToButton(button);
+            button.setDisable(true);
             return true;
         }
         Boolean isLegal = false;
@@ -975,6 +1140,20 @@ public class CartographyController {
             }
         }
         return null;
+    }
+
+    public void showScoringInfo(ActionEvent actionEvent) {
+        StringBuilder dialogContent = new StringBuilder();
+        dialogContent.append("Scoring info:\n");
+        dialogContent.append("A: " + scoringCards.getFirst() + "\n");
+        scoringCards.removeFirst();
+        dialogContent.append("B: " + scoringCards.getFirst() + "\n");
+        scoringCards.removeFirst();
+        dialogContent.append("C: " + scoringCards.getFirst() + "\n");
+        scoringCards.removeFirst();
+        dialogContent.append("D: " + scoringCards.getFirst() + "\n");
+        scoringCards.removeFirst();
+        DialogUtils.showDialog("Scoring", dialogContent.toString(), Alert.AlertType.INFORMATION);
     }
 }
 
