@@ -2,6 +2,7 @@ package hr.algebra.java2.cartographers.controllers;
 
 import hr.algebra.java2.cartographers.model.*;
 import hr.algebra.java2.cartographers.utils.DialogUtils;
+import hr.algebra.java2.cartographers.utils.DocumentationUtils;
 import hr.algebra.java2.cartographers.utils.GameUtils;
 import hr.algebra.java2.cartographers.utils.XmlUtils;
 import javafx.beans.value.ChangeListener;
@@ -16,6 +17,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1791,6 +1793,11 @@ public class CartographyController {
     }
 
     public void generateDocumentation(ActionEvent actionEvent) {
+        try {
+            DocumentationUtils.generateHtmlDocumentationFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

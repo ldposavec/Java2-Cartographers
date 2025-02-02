@@ -133,21 +133,19 @@ public class XmlUtils {
                     item.getElementsByTagName(GameMoveTag.SEASON.getTagName()).item(0).getTextContent()));
             Position gameMovePosition = new Position();
             gameMovePosition.setColumn(Integer.parseInt(
-                    item.getElementsByTagName(
-                            GameMoveTag.POSITION_X.getTagName()).item(0).getTextContent()
+                            item.getElementsByTagName(
+                                    GameMoveTag.POSITION_X.getTagName()).item(0).getTextContent()
                     )
             );
             gameMovePosition.setRow(Integer.parseInt(
-                    item.getElementsByTagName(
-                            GameMoveTag.POSITION_Y.getTagName()).item(0).getTextContent()
+                            item.getElementsByTagName(
+                                    GameMoveTag.POSITION_Y.getTagName()).item(0).getTextContent()
                     )
             );
             gameMove.setPosition(gameMovePosition);
             gameMove.setCoinCount(
                     Integer.parseInt(item.getElementsByTagName(
                             GameMoveTag.COIN_COUNT.getTagName()).item(0).getTextContent()));
-//            gameMove.setPoints(new String[][]{
-//                    item.getElementsByTagName(GameMoveTag.POINTS.getTagName()).item(0).getTextContent().split(",")});
             gameMoves.add(gameMove);
         }
 
@@ -175,10 +173,6 @@ public class XmlUtils {
         Element coinCount = document.createElement(GameMoveTag.COIN_COUNT.getTagName());
         coinCount.setTextContent(String.valueOf(move.getCoinCount()));
         gameMove.appendChild(coinCount);
-
-//        Element points = document.createElement(GameMoveTag.POINTS.getTagName());
-//        points.setTextContent(String.join(",", move.getPoints()[0]));
-//        gameMove.appendChild(points);
 
         document.getDocumentElement().appendChild(gameMove);
     }
