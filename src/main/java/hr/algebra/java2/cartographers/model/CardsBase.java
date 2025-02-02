@@ -1,5 +1,10 @@
-package hr.algebra.java2.cartographers.playables;
+package hr.algebra.java2.cartographers.model;
 
+import lombok.Data;
+import lombok.Getter;
+
+@Data
+@Getter
 public class CardsBase {
     private int points;
     private String title;
@@ -54,23 +59,23 @@ public class CardsBase {
     }
 
     // Getters for the fields (optional for immutability)
-    public int getPoints() {
-        return points;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public TerrainType[] getTerrainType() {
-        return terrainType;
-    }
-
-    public int getNumberOfShapes() {
-        return numberOfShapes;
-    }
-
-    public ShapeOnMap[] getShapes() {
-        return shapes;
-    }
+//    public int getPoints() {
+//        return points;
+//    }
+//
+//    public String getTitle() {
+//        return title;
+//    }
+//
+//    public TerrainType[] getTerrainType() {
+//        return terrainType;
+//    }
+//
+//    public int getNumberOfShapes() {
+//        return numberOfShapes;
+//    }
+//
+//    public ShapeOnMap[] getShapes() {
+//        return shapes;
+//    }
 }

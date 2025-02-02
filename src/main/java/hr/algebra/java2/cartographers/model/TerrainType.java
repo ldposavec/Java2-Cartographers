@@ -1,4 +1,4 @@
-package hr.algebra.java2.cartographers.playables;
+package hr.algebra.java2.cartographers.model;
 
 public enum TerrainType {
     FOREST,

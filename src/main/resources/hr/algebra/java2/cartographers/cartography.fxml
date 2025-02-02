@@ -52,11 +52,6 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
     </rowConstraints>
     <children>
-        <ImageView fitHeight="80.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="6">
-            <image>
-                <Image url="@../../../../img/crown-icon.png" />
-            </image>
-        </ImageView>
         <Label text="CARTOGRAPHER:" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM">
             <font>
                 <Font name="System Bold" size="12.0" />
@@ -67,17 +62,17 @@
                 <Font name="System Bold" size="12.0" />
             </font>
         </Label>
-        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+        <TextField fx:id="tfCartographer" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
         </TextField>
-        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
+        <TextField fx:id="tfPlayerTitle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
             <font>
                 <Font size="18.0" />
             </font>
         </TextField>
-        <TextField maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Kingdom name" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+        <TextField fx:id="tfKingdomName" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" promptText="Kingdom name" GridPane.columnIndex="5" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
             <font>
                 <Font size="18.0" />
             </font>
@@ -494,9 +489,9 @@
             <Font name="System Bold" size="18.0" />
          </font>
       </Button>
-      <Label fx:id="lblTerrain" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-      <Label fx:id="lblShape" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
-      <Label fx:id="lblRotation" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+      <Label fx:id="lblTerrain" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label fx:id="lblShape" GridPane.columnIndex="9" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label fx:id="lblRotation" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
       <Label text="A" GridPane.halignment="CENTER" GridPane.rowIndex="18" GridPane.valignment="BOTTOM">
          <font>
             <Font name="System Bold" size="15.0" />
@@ -602,5 +597,22 @@
             <Font name="System Bold" size="20.0" />
          </font>
       </Button>
+      <MenuBar GridPane.columnSpan="13" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+        <menus>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#startNewGame" text="New" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save" />
+                  <MenuItem mnemonicParsing="false" onAction="#loadGame" text="Load" />
+                  <MenuItem mnemonicParsing="false" onAction="#replayGame" text="Replay" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Documentation">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#generateDocumentation" text="Generate" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
     </children>
 </GridPane>

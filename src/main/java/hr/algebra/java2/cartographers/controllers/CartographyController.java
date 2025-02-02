@@ -1,21 +1,18 @@
 package hr.algebra.java2.cartographers.controllers;
 
-import hr.algebra.java2.cartographers.playables.CardsBase;
-import hr.algebra.java2.cartographers.playables.ShapeOnMap;
-import hr.algebra.java2.cartographers.playables.TerrainType;
+import hr.algebra.java2.cartographers.model.*;
 import hr.algebra.java2.cartographers.utils.DialogUtils;
+import hr.algebra.java2.cartographers.utils.GameUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -337,6 +334,12 @@ public class CartographyController {
     private Button btnScoringInfo;
     @FXML
     private Slider slCoin;
+    @FXML
+    private TextField tfCartographer;
+    @FXML
+    private TextField tfPlayerTitle;
+    @FXML
+    private TextField tfKingdomName;
 
     private int lastNum = 0;
     private int sum = 0;
@@ -346,6 +349,8 @@ public class CartographyController {
     private int shapeIterator = 0;
     private int rotationIterator = 0;
     private int turnCount = 0;
+    private ArrayList<String> pressedButtons = new ArrayList<>();
+    //    private GridPane defaultGrid;
     private Boolean hasCoin = false;
     //    private ArrayList<Button> mountains = new ArrayList<>(Arrays.asList(btnMapB4, btnMapC9, btnMapF6, btnMapI3, btnMapJ8));
     private ArrayList<Button> mountains = new ArrayList<>();
@@ -382,8 +387,106 @@ public class CartographyController {
         gpMain.addEventFilter(KeyEvent.KEY_PRESSED, this::addKeyListeners);
         Collections.shuffle(scoringCards);
 
-        lblSeason.setText("Spring");
+        lblSeason.setText(SeasonEnum.SPRING.name());
+
+//        defaultGrid = deepCopyGridPane(gpMain);
+//        GameState gState = deepClone(gpMain);
+//        defaultGrid = gState.getGrid();
     }
+
+//    private GameState deepClone(GridPane gpMain) {
+//        try {
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ObjectOutputStream oos = new ObjectOutputStream(baos);
+//            GameState gState = new GameState(gpMain);
+//            oos.writeObject(gState);
+//            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
+//            return (GameState) ois.readObject();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//            return null;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+//
+//    private GridPane deepCopyGridPane(GridPane source) {
+//        GridPane copy = new GridPane();
+//
+//        copy.getRowConstraints().addAll(source.getRowConstraints());
+//        copy.getColumnConstraints().addAll(source.getColumnConstraints());
+//
+//        for (Node node : source.getChildren()) {
+//            Integer row = GridPane.getRowIndex(node);
+//            Integer column = GridPane.getColumnIndex(node);
+//            Integer rowSpan = GridPane.getRowSpan(node);
+//            Integer columnSpan = GridPane.getColumnSpan(node);
+//
+//            Node clonedNode = cloneNode(node);
+//            if (clonedNode != null) {
+//                GridPane.setRowIndex(clonedNode, row);
+//                GridPane.setColumnIndex(clonedNode, column);
+//                if (rowSpan != null) GridPane.setRowSpan(clonedNode, rowSpan);
+//                if (columnSpan != null) GridPane.setColumnSpan(clonedNode, columnSpan);
+//                copy.getChildren().add(clonedNode);
+//            }
+//        }
+//
+//        return copy;
+//    }
+//
+//    private Node cloneNode(Node node) {
+//        if (node instanceof TextField) {
+//            TextField original = (TextField) node;
+//            TextField copy = new TextField(original.getText());
+//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
+//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
+//            copy.setId(original.getId());
+//            return copy;
+//        } else if (node instanceof Label) {
+//            Label original = (Label) node;
+//            Label copy = new Label(original.getText());
+//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
+//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
+//            copy.setId(original.getId());
+//            return copy;
+//        } else if (node instanceof Button) {
+//            Button original = (Button) node;
+//            Button copy = new Button(original.getText());
+//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
+//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
+//            copy.setOnAction(original.getOnAction());
+//            copy.setId(original.getId());
+//            return copy;
+//        } else if (node instanceof Slider) {
+//            Slider original = (Slider) node;
+//            Slider copy = new Slider(original.getMin(), original.getMax(), original.getValue());
+//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
+//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
+//            copy.setId(original.getId());
+//            return copy;
+//        }
+//        if (node instanceof TextField) {
+//            TextField original = (TextField) node;
+//            TextField copy = original;
+//            return copy;
+//        } else if (node instanceof Label) {
+//            Label original = (Label) node;
+//            Label copy = original;
+//            return copy;
+//        } else if (node instanceof Button) {
+//            Button original = (Button) node;
+//            Button copy = original;
+//            return copy;
+//        } else if (node instanceof Slider) {
+//            Slider original = (Slider) node;
+//            Slider copy = original;
+//            return copy;
+//        }
+//
+//        return null;
+//    }
 
     public void addKeyListeners(KeyEvent event) {
 //        Scene scene = gpMain.getScene();
@@ -734,6 +837,11 @@ public class CartographyController {
                         new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
         Background mountain = new Background(mountainIcon);
 
+        if (!mountains.isEmpty())
+        {
+            mountains.clear();
+        }
+
         mountains.add(btnMapB4);
         mountains.add(btnMapC9);
         mountains.add(btnMapF6);
@@ -936,8 +1044,8 @@ public class CartographyController {
     }
 
     private void checkEndOfSeason() {
-        if (lblSeason.getText().equals("Spring") && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
-            lblSeason.setText("Summer");
+        if (lblSeason.getText().equals(SeasonEnum.SPRING.name()) && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
+            lblSeason.setText(SeasonEnum.SUMMER.name());
             DialogUtils.showDialog("End of season", "End of Spring season. \n" +
                             "Summer season has started. Make sure to count your points according to 'A' and 'B' scoring cards",
                     Alert.AlertType.INFORMATION);
@@ -946,8 +1054,8 @@ public class CartographyController {
             lblScoringC.setFont(lblScoringA.getFont());
             lblScoringA.setFont(lblScoringD.getFont());
         }
-        if (lblSeason.getText().equals("Summer") && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
-            lblSeason.setText("Fall");
+        if (lblSeason.getText().equals(SeasonEnum.SUMMER.name()) && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
+            lblSeason.setText(SeasonEnum.FALL.name());
             DialogUtils.showDialog("End of season", "End of Summer season. \n" +
                             "Fall season has started. Make sure to count your points according to 'B' and 'C' scoring" +
                             " cards",
@@ -957,9 +1065,8 @@ public class CartographyController {
             lblScoringD.setFont(lblScoringB.getFont());
             lblScoringB.setFont(lblScoringA.getFont());
         }
-        if (lblSeason.getText().equals("Fall") && (lblTurnCount.getText().equals("7") || lblTurnCount.getText().equals(
-                "8"))) {
-            lblSeason.setText("Winter");
+        if (lblSeason.getText().equals(SeasonEnum.FALL.name()) && (lblTurnCount.getText().equals("7") || lblTurnCount.getText().equals("8"))) {
+            lblSeason.setText(SeasonEnum.WINTER.name());
             DialogUtils.showDialog("End of season", "End of Fall season. \n" +
                             "Winter season has started. Make sure to count your points according to 'C' and 'D' " +
                             "scoring" +
@@ -970,7 +1077,7 @@ public class CartographyController {
             lblScoringA.setFont(lblScoringC.getFont());
             lblScoringC.setFont(lblScoringB.getFont());
         }
-        if (lblSeason.getText().equals("Winter") && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
+        if (lblSeason.getText().equals(SeasonEnum.WINTER.name()) && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
             DialogUtils.showDialog("End of season", "End of Winter season. \n" +
                             "The game has ended! Make sure to count your points according to 'D' and 'A' scoring" +
                             " cards",
@@ -1033,6 +1140,11 @@ public class CartographyController {
         }
         if (isLegal) {
             for (Button buttonDisable : buttons) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(buttonDisable.getId());
+                sb.append("|");
+                sb.append(drawnCard.getTerrainType()[terrainIterator].toString());
+                pressedButtons.add(sb.toString());
                 setIconToButton(buttonDisable);
                 buttonDisable.setDisable(true);
             }
@@ -1154,6 +1266,411 @@ public class CartographyController {
         dialogContent.append("D: " + scoringCards.getFirst() + "\n");
         scoringCards.removeFirst();
         DialogUtils.showDialog("Scoring", dialogContent.toString(), Alert.AlertType.INFORMATION);
+    }
+
+    public void startNewGame(ActionEvent actionEvent) {
+////        GameState gState = generateGameState();
+////        GameState gState = new GameState(defaultGrid);
+////        GameUtils.startNewGame(gState);
+//        gpMain.getChildren().clear();
+//        GridPane newGrid = deepCopyGridPane(defaultGrid);
+////        gpMain = deepCopyGridPane(defaultGrid);
+//        gpMain.getChildren().addAll(newGrid.getChildren());
+//        initialize();
+
+        ArrayList<String> playerInfo = new ArrayList<>();
+        playerInfo.add(tfCartographer.getText());
+        playerInfo.add(tfPlayerTitle.getText());
+        playerInfo.add(tfKingdomName.getText());
+
+        ArrayList<String> scoringCardsGameState = new ArrayList<>(scoringCards);
+
+        ArrayList<String> exploreDeckGameState = new ArrayList<>();
+        for (CardsBase card : exploreDeck) {
+            StringBuilder exploreCard = new StringBuilder();
+            exploreCard.append(card.getPoints());
+            exploreCard.append("|");
+            exploreCard.append(card.getTitle());
+            exploreCard.append("|");
+            for (TerrainType terrainType : card.getTerrainType()) {
+                exploreCard.append(terrainType);
+                exploreCard.append(",");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getNumberOfShapes());
+            exploreCard.append("|");
+            for (ShapeOnMap shape : card.getShapes()) {
+                for (String direction : shape.getDirections()) {
+                    exploreCard.append(direction);
+                    exploreCard.append(",");
+                }
+                exploreCard.append(";");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
+            exploreDeckGameState.add(exploreCard.toString());
+        }
+
+        StringBuilder drawnCardGameState = new StringBuilder();
+        drawnCardGameState.append(drawnCard.getPoints());
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getTitle());
+        drawnCardGameState.append("|");
+        for (TerrainType terrainType : drawnCard.getTerrainType()) {
+            drawnCardGameState.append(terrainType);
+            drawnCardGameState.append(",");
+        }
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getNumberOfShapes());
+        drawnCardGameState.append("|");
+        for (ShapeOnMap shape : drawnCard.getShapes()) {
+            for (String direction : shape.getDirections()) {
+                drawnCardGameState.append(direction);
+                drawnCardGameState.append(",");
+            }
+            drawnCardGameState.append(";");
+        }
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getShapes()[0].getHasCoin() ? "true" : "false");
+
+        int turnCountGameState = turnCount;
+
+        SeasonEnum currentSeasonGameState = SeasonEnum.valueOf(lblSeason.getText());
+
+        ArrayList<String> mountainsGameState = new ArrayList<>();
+        for (Button mountain : mountains) {
+            StringBuilder mountainArea = new StringBuilder();
+            mountainArea.append(mountain.getId());
+            mountainArea.append("|");
+            mountainArea.append(mountain.isDisabled() ? "true" : "false");
+            mountainsGameState.add(mountainArea.toString());
+        }
+
+//        ArrayList<String> mapGameState = new ArrayList<>();
+//        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+//        for (Button[] row : mapButtons) {
+//            for (Button button : row) {
+//                StringBuilder mapArea = new StringBuilder();
+//                mapArea.append(button.getId());
+//                mapArea.append("|");
+//                mapArea.append(button.isDisabled() ? "true" : "false");
+//                if (button.isDisable())
+//                {
+//                    mapArea.append("|");
+//                    mapArea.append(button.getBackground().toString());
+//                }
+//                mapGameState.add(mapArea.toString());
+//            }
+//        }
+        String[][] mapGameState = new String[11][11];
+        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+        for (int i = 0; i < mapButtons.length; i++) {
+            for (int j = 0; j < mapButtons[i].length; j++) {
+                StringBuilder mapArea = new StringBuilder();
+                if (mapButtons[i][j] != null) {
+                    mapArea.append(mapButtons[i][j].getId());
+                    mapArea.append("|");
+                    mapArea.append(mapButtons[i][j].isDisabled() ? "true" : "false");
+                    if (mapButtons[i][j].isDisable())
+                    {
+                        mapArea.append("|");
+                        mapArea.append(mapButtons[i][j].getBackground().toString());
+                    }
+                }
+                else {
+//                    mapArea.append("btnMap" + (char) ('A' + i) + (j + 5));
+//                    mapArea.append("|");
+//                    mapArea.append("false");
+                    mapArea.append(pressedButtons.getFirst().split("\\|")[0]);
+                    mapArea.append("|");
+                    mapArea.append("true");
+                    mapArea.append("|");
+                    mapArea.append(pressedButtons.getFirst().split("\\|")[1]);
+                }
+                mapGameState[i][j] = mapArea.toString();
+            }
+        }
+//        for (Node node : gpMain.getChildren()) {
+//            if (node instanceof Button button) {
+//                StringBuilder mapArea = new StringBuilder();
+//                mapArea.append(button.getId());
+//                mapArea.append("|");
+//                mapArea.append(button.isDisabled() ? "true" : "false");
+//                mapGameState.add(mapArea.toString());
+//            }
+//        }
+
+        int coinCountGameState = (int) slCoin.getValue();
+
+//        ArrayList<String> pointsGameState = new ArrayList<>();
+//        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
+//        for (TextField[] row : points) {
+//            for (TextField textField : row) {
+//                StringBuilder pointsArea = new StringBuilder();
+//                pointsArea.append(textField.getId());
+//                pointsArea.append("|");
+//                pointsArea.append(textField.getText());
+//                pointsGameState.add(pointsArea.toString());
+//            }
+//        }
+
+        String[][] pointsGameState = new String[2][13];
+        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points[i].length; j++) {
+                StringBuilder pointsArea = new StringBuilder();
+                if (!(i == 1 && (j == 2 || j == 5 || j == 8 || j == 11 || j == 12))) {
+                    pointsArea.append(points[i][j].getId());
+                    pointsArea.append("|");
+                    pointsArea.append(points[i][j].getText());
+                    pointsGameState[i][j] = pointsArea.toString();
+                }
+            }
+        }
+
+        GameState gameState = new GameState(playerInfo, scoringCardsGameState, exploreDeckGameState,
+                drawnCardGameState.toString(), turnCountGameState, currentSeasonGameState, mountainsGameState,
+                mapGameState, coinCountGameState, pointsGameState, true);
+
+        GameUtils.startNewGame(gameState);
+
+
+        initialize();
+    }
+
+    public static <T extends Node> T[][] extractFromGridPane(
+            GridPane sourceGrid,
+            int startRow,
+            int endRow,
+            int startCol,
+            int endCol,
+            Class<T> nodeType
+    ) {
+        int rows = endRow - startRow + 1;
+        int cols = endCol - startCol + 1;
+
+        // Create a generic 2D array using reflection
+        @SuppressWarnings("unchecked")
+        T[][] nodes = (T[][]) java.lang.reflect.Array.newInstance(nodeType, rows, cols);
+
+        for (Node node : sourceGrid.getChildren()) {
+            // Ensure the node is of the specified type
+            if (nodeType.isInstance(node)) {
+                Integer rowIndex = GridPane.getRowIndex(node);
+                Integer colIndex = GridPane.getColumnIndex(node);
+
+                // Default to 0 if no index is set
+                rowIndex = (rowIndex == null) ? 0 : rowIndex;
+                colIndex = (colIndex == null) ? 0 : colIndex;
+
+                // Check if the node falls within the specified range
+                if (rowIndex >= startRow && rowIndex <= endRow && colIndex >= startCol && colIndex <= endCol) {
+                    // Add the node to the correct position in the array
+                    nodes[rowIndex - startRow][colIndex - startCol] = nodeType.cast(node);
+                }
+            }
+        }
+
+        return nodes;
+    }
+
+    private GameState generateGameState() {
+//        return new GameState(
+//                new ArrayList<>(Arrays.asList(tfCartographer, tfPlayerTitle, tfKingdomName)),
+//                scoringCards,
+//                exploreDeck,
+//                drawnCard,
+//                turnCount,
+//                SeasonEnum.valueOf(lblSeason.getText()),
+//                mountains,
+//                extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class),
+//                (int) slCoin.getValue(),
+//                extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class)
+//        );
+        /*
+        private ArrayList<String> player;
+    private String activeScoringLetters;
+    private ArrayList<String> scoringCards;
+    private ArrayList<CardsBase> exploreDeck;
+    private CardsBase drawnCard;
+    private int turnCount;
+    private SeasonEnum currentSeason;
+    private ArrayList<Button> mountains;
+    private Button[][] map;
+    private int coinCount;
+    private TextField[][] points;
+         */
+//        return new GameState(defaultGrid);
+        return null;
+    }
+
+    public void saveGame(ActionEvent actionEvent) {
+
+        ArrayList<String> playerInfo = new ArrayList<>();
+        playerInfo.add(tfCartographer.getText());
+        playerInfo.add(tfPlayerTitle.getText());
+        playerInfo.add(tfKingdomName.getText());
+
+        ArrayList<String> scoringCardsGameState = new ArrayList<>(scoringCards);
+
+        ArrayList<String> exploreDeckGameState = new ArrayList<>();
+        for (CardsBase card : exploreDeck) {
+            StringBuilder exploreCard = new StringBuilder();
+            exploreCard.append(card.getPoints());
+            exploreCard.append("|");
+            exploreCard.append(card.getTitle());
+            exploreCard.append("|");
+            for (TerrainType terrainType : card.getTerrainType()) {
+                exploreCard.append(terrainType);
+                exploreCard.append(",");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getNumberOfShapes());
+            exploreCard.append("|");
+            for (ShapeOnMap shape : card.getShapes()) {
+                for (String direction : shape.getDirections()) {
+                    exploreCard.append(direction);
+                    exploreCard.append(",");
+                }
+                exploreCard.append(";");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
+            exploreDeckGameState.add(exploreCard.toString());
+        }
+
+        StringBuilder drawnCardGameState = new StringBuilder();
+        drawnCardGameState.append(drawnCard.getPoints());
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getTitle());
+        drawnCardGameState.append("|");
+        for (TerrainType terrainType : drawnCard.getTerrainType()) {
+            drawnCardGameState.append(terrainType);
+            drawnCardGameState.append(",");
+        }
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getNumberOfShapes());
+        drawnCardGameState.append("|");
+        for (ShapeOnMap shape : drawnCard.getShapes()) {
+            for (String direction : shape.getDirections()) {
+                drawnCardGameState.append(direction);
+                drawnCardGameState.append(",");
+            }
+            drawnCardGameState.append(";");
+        }
+        drawnCardGameState.append("|");
+        drawnCardGameState.append(drawnCard.getShapes()[0].getHasCoin() ? "true" : "false");
+
+        int turnCountGameState = turnCount;
+
+        SeasonEnum currentSeasonGameState = SeasonEnum.valueOf(lblSeason.getText());
+
+        ArrayList<String> mountainsGameState = new ArrayList<>();
+        for (Button mountain : mountains) {
+            StringBuilder mountainArea = new StringBuilder();
+            mountainArea.append(mountain.getId());
+            mountainArea.append("|");
+            mountainArea.append(mountain.isDisabled() ? "true" : "false");
+            mountainsGameState.add(mountainArea.toString());
+        }
+
+//        ArrayList<String> mapGameState = new ArrayList<>();
+//        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+//        for (Button[] row : mapButtons) {
+//            for (Button button : row) {
+//                StringBuilder mapArea = new StringBuilder();
+//                mapArea.append(button.getId());
+//                mapArea.append("|");
+//                mapArea.append(button.isDisabled() ? "true" : "false");
+//                if (button.isDisable())
+//                {
+//                    mapArea.append("|");
+//                    mapArea.append(button.getBackground().toString());
+//                }
+//                mapGameState.add(mapArea.toString());
+//            }
+//        }
+        String[][] mapGameState = new String[11][11];
+        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+        for (int i = 0; i < mapButtons.length; i++) {
+            for (int j = 0; j < mapButtons[i].length; j++) {
+                StringBuilder mapArea = new StringBuilder();
+                if (mapButtons[i][j] != null) {
+                    mapArea.append(mapButtons[i][j].getId());
+                    mapArea.append("|");
+                    mapArea.append(mapButtons[i][j].isDisabled() ? "true" : "false");
+                    if (mapButtons[i][j].isDisable())
+                    {
+                        mapArea.append("|");
+                        mapArea.append(mapButtons[i][j].getBackground().toString());
+                    }
+                }
+                else {
+//                    mapArea.append("btnMap" + (char) ('A' + i) + (j + 5));
+//                    mapArea.append("|");
+//                    mapArea.append("false");
+                    mapArea.append(pressedButtons.getFirst().split("\\|")[0]);
+                    mapArea.append("|");
+                    mapArea.append("true");
+                    mapArea.append("|");
+                    mapArea.append(pressedButtons.getFirst().split("\\|")[1]);
+                }
+                mapGameState[i][j] = mapArea.toString();
+            }
+        }
+//        for (Node node : gpMain.getChildren()) {
+//            if (node instanceof Button button) {
+//                StringBuilder mapArea = new StringBuilder();
+//                mapArea.append(button.getId());
+//                mapArea.append("|");
+//                mapArea.append(button.isDisabled() ? "true" : "false");
+//                mapGameState.add(mapArea.toString());
+//            }
+//        }
+
+        int coinCountGameState = (int) slCoin.getValue();
+
+//        ArrayList<String> pointsGameState = new ArrayList<>();
+//        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
+//        for (TextField[] row : points) {
+//            for (TextField textField : row) {
+//                StringBuilder pointsArea = new StringBuilder();
+//                pointsArea.append(textField.getId());
+//                pointsArea.append("|");
+//                pointsArea.append(textField.getText());
+//                pointsGameState.add(pointsArea.toString());
+//            }
+//        }
+
+        String[][] pointsGameState = new String[2][13];
+        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points[i].length; j++) {
+                StringBuilder pointsArea = new StringBuilder();
+                if (!(i == 1 && (j == 2 || j == 5 || j == 8 || j == 11 || j == 12))) {
+                    pointsArea.append(points[i][j].getId());
+                    pointsArea.append("|");
+                    pointsArea.append(points[i][j].getText());
+                    pointsGameState[i][j] = pointsArea.toString();
+                }
+            }
+        }
+
+        GameState gameState = new GameState(playerInfo, scoringCardsGameState, exploreDeckGameState,
+                drawnCardGameState.toString(), turnCountGameState, currentSeasonGameState, mountainsGameState,
+                mapGameState, coinCountGameState, pointsGameState, true);
+
+        GameState gameStateToSave = GameUtils.generateGameState(gameState);
+        GameUtils.saveGame(gameStateToSave);
+    }
+
+    public void loadGame(ActionEvent actionEvent) {
+    }
+
+    public void replayGame(ActionEvent actionEvent) {
+    }
+
+    public void generateDocumentation(ActionEvent actionEvent) {
     }
 }
 

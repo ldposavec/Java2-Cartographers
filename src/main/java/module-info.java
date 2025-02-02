@@ -9,6 +9,8 @@ module hr.algebra.java2.cartographers {
     requires org.kordamp.bootstrapfx.core;
     requires com.almasb.fxgl.all;
     requires annotations;
+    requires static lombok;
+    requires jdk.internal.le;
 
     opens hr.algebra.java2.cartographers to javafx.fxml;
     exports hr.algebra.java2.cartographers;
