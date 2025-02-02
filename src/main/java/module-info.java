@@ -11,6 +11,7 @@ module hr.algebra.java2.cartographers {
     requires annotations;
     requires static lombok;
     requires jdk.internal.le;
+    requires java.xml;
 
     opens hr.algebra.java2.cartographers to javafx.fxml;
     exports hr.algebra.java2.cartographers;

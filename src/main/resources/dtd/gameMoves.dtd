@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT GameMoves (GameMove+)>
+<!ELEMENT GameMove (TurnCount, Season, PositionX, PositionY, CoinCount)>
+<!--<!ELEMENT GameMove (TurnCount, Season, PositionX, PositionY, CoinCount, Points)>-->
+<!ELEMENT TurnCount (#PCDATA)>
+<!ELEMENT Season (#PCDATA)>
+<!ELEMENT PositionX (#PCDATA)>
+<!ELEMENT PositionY (#PCDATA)>
+<!ELEMENT CoinCount (#PCDATA)>
+<!--<!ELEMENT Points (#PCDATA)>-->

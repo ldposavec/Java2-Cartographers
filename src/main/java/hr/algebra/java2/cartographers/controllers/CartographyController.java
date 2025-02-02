@@ -3,6 +3,7 @@ package hr.algebra.java2.cartographers.controllers;
 import hr.algebra.java2.cartographers.model.*;
 import hr.algebra.java2.cartographers.utils.DialogUtils;
 import hr.algebra.java2.cartographers.utils.GameUtils;
+import hr.algebra.java2.cartographers.utils.XmlUtils;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -991,6 +992,12 @@ public class CartographyController {
             lblTurnCount.setText(String.valueOf(turnCount));
             checkEndOfSeason();
         }
+        Position position = new Position();
+        position.setRow(Character.toUpperCase(button.getId().charAt(6)) - 'A');
+        position.setColumn(Character.getNumericValue(button.getId().charAt(7)) - 1);
+        GameMove gameMove = new GameMove(turnCount, SeasonEnum.valueOf(lblSeason.getText().toString()), position,
+                (int)slCoin.getValue());
+        XmlUtils.saveNewMove(gameMove);
     }
 
     private boolean checkMountainAdjacents() {
@@ -1363,7 +1370,7 @@ public class CartographyController {
 //            }
 //        }
         String[][] mapGameState = new String[11][11];
-        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
         for (int i = 0; i < mapButtons.length; i++) {
             for (int j = 0; j < mapButtons[i].length; j++) {
                 StringBuilder mapArea = new StringBuilder();
@@ -1591,7 +1598,7 @@ public class CartographyController {
 //            }
 //        }
         String[][] mapGameState = new String[11][11];
-        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
+        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
         for (int i = 0; i < mapButtons.length; i++) {
             for (int j = 0; j < mapButtons[i].length; j++) {
                 StringBuilder mapArea = new StringBuilder();
@@ -1602,7 +1609,7 @@ public class CartographyController {
                     if (mapButtons[i][j].isDisable())
                     {
                         mapArea.append("|");
-                        mapArea.append(mapButtons[i][j].getBackground().toString());
+                        mapArea.append(((Background) ( mapButtons[i][j].backgroundProperty()).getValue()).getImages().getFirst().getImage().getUrl());
                     }
                 }
                 else {
@@ -1665,6 +1672,119 @@ public class CartographyController {
     }
 
     public void loadGame(ActionEvent actionEvent) {
+        GameState loadedGame = GameUtils.loadGame();
+
+        tfCartographer.setText(loadedGame.getPlayerInfo().get(0));
+        tfPlayerTitle.setText(loadedGame.getPlayerInfo().get(1));
+        tfKingdomName.setText(loadedGame.getPlayerInfo().get(2));
+
+        scoringCards = loadedGame.getScoringCards();
+
+        exploreDeck.clear();
+        for (String card : loadedGame.getExploreDeck()) {
+            String[] cardParts = card.split("\\|");
+            CardsBase.Builder cardBuilder = new CardsBase.Builder();
+            cardBuilder.setPoints(Integer.parseInt(cardParts[0]));
+            cardBuilder.setTitle(cardParts[1]);
+            String[] terrainTypes = cardParts[2].split(",");
+            TerrainType[] terrainTypesArray = new TerrainType[terrainTypes.length];
+            for (int i = 0; i < terrainTypes.length; i++) {
+                terrainTypesArray[i] = TerrainType.valueOf(terrainTypes[i]);
+            }
+            cardBuilder.setTerrainType(terrainTypesArray);
+            cardBuilder.setNumberOfShapes(Integer.parseInt(cardParts[3]));
+            String[] shapes = cardParts[4].split(";");
+            ShapeOnMap[] shapesArray = new ShapeOnMap[shapes.length];
+            for (int i = 0; i < shapes.length; i++) {
+                String[] directions = shapes[i].split(",");
+                ArrayList<String> directionsList = new ArrayList<>(Arrays.asList(directions));
+                if (i == 0 && Boolean.parseBoolean(cardParts[5])) {
+                    shapesArray[i] = new ShapeOnMap(directionsList, true);
+                } else {
+                    shapesArray[i] = new ShapeOnMap(directionsList, false);
+                }
+            }
+            cardBuilder.setShapes(shapesArray);
+            exploreDeck.add(cardBuilder.build());
+        }
+
+        String[] drawnCardParts = loadedGame.getDrawnCard().split("\\|");
+        CardsBase.Builder drawnCardBuilder = new CardsBase.Builder();
+        drawnCardBuilder.setPoints(Integer.parseInt(drawnCardParts[0]));
+        drawnCardBuilder.setTitle(drawnCardParts[1]);
+        String[] terrainTypes = drawnCardParts[2].split(",");
+        TerrainType[] terrainTypesArray = new TerrainType[terrainTypes.length];
+        for (int i = 0; i < terrainTypes.length; i++) {
+            terrainTypesArray[i] = TerrainType.valueOf(terrainTypes[i]);
+        }
+        drawnCardBuilder.setTerrainType(terrainTypesArray);
+        drawnCardBuilder.setNumberOfShapes(Integer.parseInt(drawnCardParts[3]));
+        String[] shapes = drawnCardParts[4].split(";");
+        ShapeOnMap[] shapesArray = new ShapeOnMap[shapes.length];
+        for (int i = 0; i < shapes.length; i++) {
+            String[] directions = shapes[i].split(",");
+            ArrayList<String> directionsList = new ArrayList<>(Arrays.asList(directions));
+            if (i == 0 && Boolean.parseBoolean(drawnCardParts[5])) {
+                shapesArray[i] = new ShapeOnMap(directionsList, true);
+            } else {
+                shapesArray[i] = new ShapeOnMap(directionsList, false);
+            }
+        }
+        drawnCardBuilder.setShapes(shapesArray);
+        drawnCard = drawnCardBuilder.build();
+
+        turnCount = loadedGame.getTurnCount();
+        lblTurnCount.setText(String.valueOf(turnCount));
+
+        lblSeason.setText(loadedGame.getCurrentSeason().name());
+        checkEndOfSeason();
+
+        // Might need fixing:
+        mountains.clear();
+        for (String mountain : loadedGame.getMountains()) {
+            String[] mountainParts = mountain.split("\\|");
+            Button mountainButton = new Button();
+            mountainButton.setId(mountainParts[0]);
+            mountainButton.setDisable(Boolean.parseBoolean(mountainParts[1]));
+            mountains.add(mountainButton);
+        }
+
+        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
+        for (int i = 0; i < mapButtons.length; i++) {
+            for (int j = 0; j < mapButtons[i].length; j++) {
+                String[] mapAreaParts = loadedGame.getMap()[i][j].split("\\|");
+                Button mapButton = new Button();
+                mapButton.setId(mapAreaParts[0]);
+                Button existingButton = (Button) gpMain.lookup("#" + mapAreaParts[0]);
+                mapButton.setDisable(Boolean.parseBoolean(mapAreaParts[1]));
+                if (mapButton.isDisable()) {
+                    BackgroundImage icon =
+                            new BackgroundImage(new Image(mapAreaParts[2], mapButton.heightProperty().doubleValue(), mapButton.widthProperty().doubleValue(), false,
+                                    true, true),
+                                    BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                                    new BackgroundSize(mapButton.getWidth(), mapButton.getHeight(), true, true, true, false));
+                    Background bgIcon = new Background(icon);
+                    mapButton.setBackground(bgIcon);
+                    existingButton.setDisable(mapButton.isDisable());
+                    existingButton.setBackground(mapButton.getBackground());
+                }
+                mapButtons[i][j] = mapButton;
+            }
+        }
+
+        slCoin.adjustValue(loadedGame.getCoinCount());
+
+        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
+        for (int i = 0; i < points.length; i++) {
+            for (int j = 0; j < points[i].length; j++) {
+                if (loadedGame.getPoints()[i][j] == null) {
+                    continue;
+                }
+                String[] pointsAreaParts = loadedGame.getPoints()[i][j].split("\\|");
+                points[i][j].setId(pointsAreaParts[0]);
+                points[i][j].setText(pointsAreaParts[1]);
+            }
+        }
     }
 
     public void replayGame(ActionEvent actionEvent) {
