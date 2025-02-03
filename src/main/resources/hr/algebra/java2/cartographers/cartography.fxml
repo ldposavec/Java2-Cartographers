@@ -614,5 +614,7 @@
           </Menu>
         </menus>
       </MenuBar>
+      <Label text="Last Move:" GridPane.columnIndex="4" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+      <Label fx:id="lblLastGameMove" GridPane.columnIndex="6" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
     </children>
 </GridPane>

@@ -1,10 +1,10 @@
 package hr.algebra.java2.cartographers.controllers;
 
 import hr.algebra.java2.cartographers.model.*;
-import hr.algebra.java2.cartographers.utils.DialogUtils;
-import hr.algebra.java2.cartographers.utils.DocumentationUtils;
-import hr.algebra.java2.cartographers.utils.GameUtils;
-import hr.algebra.java2.cartographers.utils.XmlUtils;
+import hr.algebra.java2.cartographers.thread.SaveLastGameMoveThread;
+import hr.algebra.java2.cartographers.utils.*;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,10 +18,8 @@ import javafx.scene.layout.*;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CartographyController {
     @FXML
@@ -34,7 +32,7 @@ public class CartographyController {
     private TextField tfNum2001;
     @FXML
     private TextField tfNum1902;
-    //
+
     @FXML
     private TextField tfNum1903;
     @FXML
@@ -45,7 +43,7 @@ public class CartographyController {
     private TextField tfNum2004;
     @FXML
     private TextField tfNum1905;
-    //
+
     @FXML
     private TextField tfNum1906;
     @FXML
@@ -56,7 +54,7 @@ public class CartographyController {
     private TextField tfNum2007;
     @FXML
     private TextField tfNum1908;
-    //
+
     @FXML
     private TextField tfNum1909;
     @FXML
@@ -67,252 +65,19 @@ public class CartographyController {
     private TextField tfNum2010;
     @FXML
     private TextField tfNum1911;
-    //
-    @FXML
-    private TextField tfNum1912;
 
     @FXML
-    private Button btnMapA1;
-    @FXML
-    private Button btnMapA2;
-    @FXML
-    private Button btnMapA3;
-    @FXML
-    private Button btnMapA4;
-    @FXML
-    private Button btnMapA5;
-    @FXML
-    private Button btnMapA6;
-    @FXML
-    private Button btnMapA7;
-    @FXML
-    private Button btnMapA8;
-    @FXML
-    private Button btnMapA9;
-    @FXML
-    private Button btnMapA10;
-    @FXML
-    private Button btnMapA11;
-    @FXML
-    private Button btnMapB1;
-    @FXML
-    private Button btnMapB2;
-    @FXML
-    private Button btnMapB3;
+    private TextField tfNum1912;
     @FXML
     private Button btnMapB4;
     @FXML
-    private Button btnMapB5;
-    @FXML
-    private Button btnMapB6;
-    @FXML
-    private Button btnMapB7;
-    @FXML
-    private Button btnMapB8;
-    @FXML
-    private Button btnMapB9;
-    @FXML
-    private Button btnMapB10;
-    @FXML
-    private Button btnMapB11;
-    @FXML
-    private Button btnMapC1;
-    @FXML
-    private Button btnMapC2;
-    @FXML
-    private Button btnMapC3;
-    @FXML
-    private Button btnMapC4;
-    @FXML
-    private Button btnMapC5;
-    @FXML
-    private Button btnMapC6;
-    @FXML
-    private Button btnMapC7;
-    @FXML
-    private Button btnMapC8;
-    @FXML
     private Button btnMapC9;
-    @FXML
-    private Button btnMapC10;
-    @FXML
-    private Button btnMapC11;
-    @FXML
-    private Button btnMapD1;
-    @FXML
-    private Button btnMapD2;
-    @FXML
-    private Button btnMapD3;
-    @FXML
-    private Button btnMapD4;
-    @FXML
-    private Button btnMapD5;
-    @FXML
-    private Button btnMapD6;
-    @FXML
-    private Button btnMapD7;
-    @FXML
-    private Button btnMapD8;
-    @FXML
-    private Button btnMapD9;
-    @FXML
-    private Button btnMapD10;
-    @FXML
-    private Button btnMapD11;
-    @FXML
-    private Button btnMapE1;
-    @FXML
-    private Button btnMapE2;
-    @FXML
-    private Button btnMapE3;
-    @FXML
-    private Button btnMapE4;
-    @FXML
-    private Button btnMapE5;
-    @FXML
-    private Button btnMapE6;
-    @FXML
-    private Button btnMapE7;
-    @FXML
-    private Button btnMapE8;
-    @FXML
-    private Button btnMapE9;
-    @FXML
-    private Button btnMapE10;
-    @FXML
-    private Button btnMapE11;
-    @FXML
-    private Button btnMapF1;
-    @FXML
-    private Button btnMapF2;
-    @FXML
-    private Button btnMapF3;
-    @FXML
-    private Button btnMapF4;
-    @FXML
-    private Button btnMapF5;
     @FXML
     private Button btnMapF6;
     @FXML
-    private Button btnMapF7;
-    @FXML
-    private Button btnMapF8;
-    @FXML
-    private Button btnMapF9;
-    @FXML
-    private Button btnMapF10;
-    @FXML
-    private Button btnMapF11;
-    @FXML
-    private Button btnMapG1;
-    @FXML
-    private Button btnMapG2;
-    @FXML
-    private Button btnMapG3;
-    @FXML
-    private Button btnMapG4;
-    @FXML
-    private Button btnMapG5;
-    @FXML
-    private Button btnMapG6;
-    @FXML
-    private Button btnMapG7;
-    @FXML
-    private Button btnMapG8;
-    @FXML
-    private Button btnMapG9;
-    @FXML
-    private Button btnMapG10;
-    @FXML
-    private Button btnMapG11;
-    @FXML
-    private Button btnMapH1;
-    @FXML
-    private Button btnMapH2;
-    @FXML
-    private Button btnMapH3;
-    @FXML
-    private Button btnMapH4;
-    @FXML
-    private Button btnMapH5;
-    @FXML
-    private Button btnMapH6;
-    @FXML
-    private Button btnMapH7;
-    @FXML
-    private Button btnMapH8;
-    @FXML
-    private Button btnMapH9;
-    @FXML
-    private Button btnMapH10;
-    @FXML
-    private Button btnMapH11;
-    @FXML
-    private Button btnMapI1;
-    @FXML
-    private Button btnMapI2;
-    @FXML
     private Button btnMapI3;
     @FXML
-    private Button btnMapI4;
-    @FXML
-    private Button btnMapI5;
-    @FXML
-    private Button btnMapI6;
-    @FXML
-    private Button btnMapI7;
-    @FXML
-    private Button btnMapI8;
-    @FXML
-    private Button btnMapI9;
-    @FXML
-    private Button btnMapI10;
-    @FXML
-    private Button btnMapI11;
-    @FXML
-    private Button btnMapJ1;
-    @FXML
-    private Button btnMapJ2;
-    @FXML
-    private Button btnMapJ3;
-    @FXML
-    private Button btnMapJ4;
-    @FXML
-    private Button btnMapJ5;
-    @FXML
-    private Button btnMapJ6;
-    @FXML
-    private Button btnMapJ7;
-    @FXML
     private Button btnMapJ8;
-    @FXML
-    private Button btnMapJ9;
-    @FXML
-    private Button btnMapJ10;
-    @FXML
-    private Button btnMapJ11;
-    @FXML
-    private Button btnMapK1;
-    @FXML
-    private Button btnMapK2;
-    @FXML
-    private Button btnMapK3;
-    @FXML
-    private Button btnMapK4;
-    @FXML
-    private Button btnMapK5;
-    @FXML
-    private Button btnMapK6;
-    @FXML
-    private Button btnMapK7;
-    @FXML
-    private Button btnMapK8;
-    @FXML
-    private Button btnMapK9;
-    @FXML
-    private Button btnMapK10;
-    @FXML
-    private Button btnMapK11;
     @FXML
     private Label lblTerrain;
     @FXML
@@ -343,9 +108,10 @@ public class CartographyController {
     private TextField tfPlayerTitle;
     @FXML
     private TextField tfKingdomName;
+    @FXML
+    private Label lblLastGameMove;
 
     private int lastNum = 0;
-    private int sum = 0;
     private ArrayList<CardsBase> exploreDeck;
     private CardsBase drawnCard;
     private int terrainIterator = 0;
@@ -353,9 +119,7 @@ public class CartographyController {
     private int rotationIterator = 0;
     private int turnCount = 0;
     private ArrayList<String> pressedButtons = new ArrayList<>();
-    //    private GridPane defaultGrid;
     private Boolean hasCoin = false;
-    //    private ArrayList<Button> mountains = new ArrayList<>(Arrays.asList(btnMapB4, btnMapC9, btnMapF6, btnMapI3, btnMapJ8));
     private ArrayList<Button> mountains = new ArrayList<>();
     private ArrayList<String> scoringCards = new ArrayList<>(Arrays.asList("Earn one reputation star for each row and" +
                     " column with at least one forest space. The same forest space may be scored in a row and a column.",
@@ -364,136 +128,24 @@ public class CartographyController {
                     "cluster of six or more village spaces.", "Earn six reputation stars for each complete row or complete column of filled spaces."));
 
     public void initialize() {
-        addNumericValidationListener(tfNum1900);
-        addNumericValidationListener(tfNum1901);
-        addNumericValidationListener(tfNum2000);
-        addNumericValidationListener(tfNum2001);
+        ArrayList<TextField> textFields = new ArrayList<>(Arrays.asList(tfNum1900, tfNum1901, tfNum2000, tfNum2001,
+                tfNum1902, tfNum1903, tfNum2003, tfNum1904, tfNum2004, tfNum1905, tfNum1906, tfNum2006, tfNum1907,
+                tfNum2007, tfNum1908, tfNum1909, tfNum2009, tfNum1910, tfNum2010, tfNum1911, tfNum1912));
 
-        addNumericValidationListener(tfNum1903);
-        addNumericValidationListener(tfNum1904);
-        addNumericValidationListener(tfNum2003);
-        addNumericValidationListener(tfNum2004);
-
-        addNumericValidationListener(tfNum1906);
-        addNumericValidationListener(tfNum1907);
-        addNumericValidationListener(tfNum2006);
-        addNumericValidationListener(tfNum2007);
-
-        addNumericValidationListener(tfNum1909);
-        addNumericValidationListener(tfNum1910);
-        addNumericValidationListener(tfNum2009);
-        addNumericValidationListener(tfNum2010);
+        textFields.forEach(this::addNumericValidationListener);
 
         initializeMountains();
-        initializeExploreDeck();
+        exploreDeck = InitializeUtils.initializeExploreDeck();
 
         gpMain.addEventFilter(KeyEvent.KEY_PRESSED, this::addKeyListeners);
         Collections.shuffle(scoringCards);
 
         lblSeason.setText(SeasonEnum.SPRING.name());
 
-//        defaultGrid = deepCopyGridPane(gpMain);
-//        GameState gState = deepClone(gpMain);
-//        defaultGrid = gState.getGrid();
+        setTimeline();
     }
 
-//    private GameState deepClone(GridPane gpMain) {
-//        try {
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ObjectOutputStream oos = new ObjectOutputStream(baos);
-//            GameState gState = new GameState(gpMain);
-//            oos.writeObject(gState);
-//            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(baos.toByteArray()));
-//            return (GameState) ois.readObject();
-//        } catch (ClassNotFoundException e) {
-//            e.printStackTrace();
-//            return null;
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-//
-//    private GridPane deepCopyGridPane(GridPane source) {
-//        GridPane copy = new GridPane();
-//
-//        copy.getRowConstraints().addAll(source.getRowConstraints());
-//        copy.getColumnConstraints().addAll(source.getColumnConstraints());
-//
-//        for (Node node : source.getChildren()) {
-//            Integer row = GridPane.getRowIndex(node);
-//            Integer column = GridPane.getColumnIndex(node);
-//            Integer rowSpan = GridPane.getRowSpan(node);
-//            Integer columnSpan = GridPane.getColumnSpan(node);
-//
-//            Node clonedNode = cloneNode(node);
-//            if (clonedNode != null) {
-//                GridPane.setRowIndex(clonedNode, row);
-//                GridPane.setColumnIndex(clonedNode, column);
-//                if (rowSpan != null) GridPane.setRowSpan(clonedNode, rowSpan);
-//                if (columnSpan != null) GridPane.setColumnSpan(clonedNode, columnSpan);
-//                copy.getChildren().add(clonedNode);
-//            }
-//        }
-//
-//        return copy;
-//    }
-//
-//    private Node cloneNode(Node node) {
-//        if (node instanceof TextField) {
-//            TextField original = (TextField) node;
-//            TextField copy = new TextField(original.getText());
-//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
-//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
-//            copy.setId(original.getId());
-//            return copy;
-//        } else if (node instanceof Label) {
-//            Label original = (Label) node;
-//            Label copy = new Label(original.getText());
-//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
-//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
-//            copy.setId(original.getId());
-//            return copy;
-//        } else if (node instanceof Button) {
-//            Button original = (Button) node;
-//            Button copy = new Button(original.getText());
-//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
-//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
-//            copy.setOnAction(original.getOnAction());
-//            copy.setId(original.getId());
-//            return copy;
-//        } else if (node instanceof Slider) {
-//            Slider original = (Slider) node;
-//            Slider copy = new Slider(original.getMin(), original.getMax(), original.getValue());
-//            copy.setPrefSize(original.getPrefWidth(), original.getPrefHeight());
-//            copy.setMaxSize(original.getMaxWidth(), original.getMaxHeight());
-//            copy.setId(original.getId());
-//            return copy;
-//        }
-//        if (node instanceof TextField) {
-//            TextField original = (TextField) node;
-//            TextField copy = original;
-//            return copy;
-//        } else if (node instanceof Label) {
-//            Label original = (Label) node;
-//            Label copy = original;
-//            return copy;
-//        } else if (node instanceof Button) {
-//            Button original = (Button) node;
-//            Button copy = original;
-//            return copy;
-//        } else if (node instanceof Slider) {
-//            Slider original = (Slider) node;
-//            Slider copy = original;
-//            return copy;
-//        }
-//
-//        return null;
-//    }
-
     public void addKeyListeners(KeyEvent event) {
-//        Scene scene = gpMain.getScene();
-//        scene.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
         if (event.getCode() == KeyCode.TAB) {
             handleTabPress();
             event.consume();
@@ -515,7 +167,7 @@ public class CartographyController {
         if (rotationIterator >= 360) {
             rotationIterator = 0;
         }
-        lblRotation.setText(rotationIterator + " degrees");
+        Platform.runLater(() -> lblRotation.setText(rotationIterator + " degrees"));
     }
 
     private void handleShiftPress() {
@@ -523,7 +175,7 @@ public class CartographyController {
         if (shapeIterator >= drawnCard.getShapes().length) {
             shapeIterator = 0;
         }
-        lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString());
+        Platform.runLater(() -> lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString()));
     }
 
     private void handleTabPress() {
@@ -532,303 +184,7 @@ public class CartographyController {
             terrainIterator = 0;
         }
         System.out.println("Terrain iterator: " + terrainIterator);
-        lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString());
-    }
-
-    private void initializeExploreDeck() {
-        exploreDeck = new ArrayList<>();
-        CardsBase treetopVillage = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Treetop Village")
-                .setTerrainType(new TerrainType[]{TerrainType.FOREST, TerrainType.VILLAGE})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("E");
-                    add("E");
-                    add("N");
-                    add("E");
-                }}, false),
-                        new ShapeOnMap(new ArrayList<String>() {{
-                            add("X");
-                        }}, false)})
-                .build();
-        CardsBase outpostRuins = new CardsBase.Builder()
-                .setPoints(0)
-                .setTitle("Outpost Ruins")
-                .setTerrainType(new TerrainType[]{TerrainType.RUINS})
-                .setNumberOfShapes(1)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase farmland = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Farmland")
-                .setTerrainType(new TerrainType[]{TerrainType.FARM})
-                .setNumberOfShapes(3)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                }}, true),
-                        new ShapeOnMap(new ArrayList<String>() {{
-                            add("X");
-                            add("N");
-                            add("O");
-                            add("E");
-                            add("S");
-                            add("O");
-                            add("S");
-                            add("W");
-                            add("O");
-                            add("W");
-                            add("N");
-                        }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase forgottenForest = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Forgotten Forest")
-                .setTerrainType(new TerrainType[]{TerrainType.FOREST})
-                .setNumberOfShapes(3)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("O");
-                    add("E");
-                    add("S");
-                }}, true),
-                        new ShapeOnMap(new ArrayList<String>() {{
-                            add("X");
-                            add("S");
-                            add("E");
-                            add("S");
-                        }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase orchard = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Orchard")
-                .setTerrainType(new TerrainType[]{TerrainType.FOREST, TerrainType.FARM})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {
-                    {
-                        add("X");
-                        add("E");
-                        add("E");
-                        add("S");
-                    }
-                }, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase hamlet = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Hamlet")
-                .setTerrainType(new TerrainType[]{TerrainType.VILLAGE})
-                .setNumberOfShapes(3)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("E");
-                }}, true),
-                        new ShapeOnMap(new ArrayList<String>() {{
-                            add("X");
-                            add("W");
-                            add("W");
-                            add("S");
-                            add("E");
-                        }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase riftLands = new CardsBase.Builder()
-                .setPoints(0)
-                .setTitle("Rift Lands")
-                .setTerrainType(new TerrainType[]{TerrainType.FOREST, TerrainType.VILLAGE, TerrainType.FARM,
-                        TerrainType.WATER, TerrainType.MONSTER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase homestead = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Homestead")
-                .setTerrainType(new TerrainType[]{TerrainType.FARM, TerrainType.VILLAGE})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("E");
-                    add("O");
-                    add("S");
-                    add("W");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase hinterlandStream = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Hinterland Stream")
-                .setTerrainType(new TerrainType[]{TerrainType.FARM, TerrainType.WATER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("N");
-                    add("N");
-                    add("E");
-                    add("E");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase greatRiver = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Great River")
-                .setTerrainType(new TerrainType[]{TerrainType.WATER})
-                .setNumberOfShapes(3)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("S");
-                }}, true),
-                        new ShapeOnMap(new ArrayList<String>() {{
-                            add("X");
-                            add("E");
-                            add("N");
-                            add("E");
-                            add("N");
-                        }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase templeRuins = new CardsBase.Builder()
-                .setPoints(0)
-                .setTitle("Temple Ruins")
-                .setTerrainType(new TerrainType[]{TerrainType.RUINS})
-                .setNumberOfShapes(1)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase marshlands = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Marshlands")
-                .setTerrainType(new TerrainType[]{TerrainType.WATER, TerrainType.FOREST})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("S");
-                    add("O");
-                    add("E");
-                    add("N");
-                    add("E");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase fishingVillage = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Fishing Village")
-                .setTerrainType(new TerrainType[]{TerrainType.VILLAGE, TerrainType.WATER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("E");
-                    add("E");
-                    add("E");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase koboldOnslaught = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Kobold Onslaught")
-                .setTerrainType(new TerrainType[]{TerrainType.MONSTER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("E");
-                    add("O");
-                    add("S");
-                    add("W");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase bugbearAssault = new CardsBase.Builder()
-                .setPoints(1)
-                .setTitle("Bugbear Assault")
-                .setTerrainType(new TerrainType[]{TerrainType.MONSTER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("S");
-                    add("O");
-                    add("E");
-                    add("E");
-                    add("N");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase goblinAttack = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Goblin Attack")
-                .setTerrainType(new TerrainType[]{TerrainType.MONSTER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("O");
-                    add("E");
-                    add("S");
-                    add("O");
-                    add("E");
-                    add("S");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-        CardsBase gnollRaid = new CardsBase.Builder()
-                .setPoints(2)
-                .setTitle("Gnoll Raid")
-                .setTerrainType(new TerrainType[]{TerrainType.MONSTER})
-                .setNumberOfShapes(2)
-                .setShapes(new ShapeOnMap[]{new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                    add("W");
-                    add("S");
-                    add("S");
-                    add("E");
-                }}, false), new ShapeOnMap(new ArrayList<String>() {{
-                    add("X");
-                }}, false)})
-                .build();
-
-        exploreDeck.add(treetopVillage);
-        exploreDeck.add(outpostRuins);
-        exploreDeck.add(farmland);
-        exploreDeck.add(forgottenForest);
-        exploreDeck.add(orchard);
-        exploreDeck.add(hamlet);
-        exploreDeck.add(riftLands);
-        exploreDeck.add(homestead);
-        exploreDeck.add(hinterlandStream);
-        exploreDeck.add(greatRiver);
-        exploreDeck.add(templeRuins);
-        exploreDeck.add(marshlands);
-        exploreDeck.add(fishingVillage);
-        exploreDeck.add(koboldOnslaught);
-        exploreDeck.add(bugbearAssault);
-        exploreDeck.add(goblinAttack);
-        exploreDeck.add(gnollRaid);
-
-        Collections.shuffle(exploreDeck);
-
+        Platform.runLater(() -> lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString()));
     }
 
     private void initializeMountains() {
@@ -884,66 +240,36 @@ public class CartographyController {
 
                 if (isNum) {
                     lastNum = Integer.parseInt(sb.toString());
-                    calculateTfNum1902();
-                    calculateTfNum1905();
-                    calculateTfNum1908();
-                    calculateTfNum1911();
-                    calculateTfNum1912();
+                    updateCalculations();
                 }
             }
         });
     }
 
-    private void calculateTfNum1912() {
-        sum += Integer.parseInt(tfNum1902.getText());
-        sum += Integer.parseInt(tfNum1905.getText());
-        sum += Integer.parseInt(tfNum1908.getText());
-        sum += Integer.parseInt(tfNum1911.getText());
-        tfNum1912.setText(String.valueOf(sum));
-        sum = 0;
+    private void updateCalculations() {
+        calculateSum(tfNum1902, tfNum1900, tfNum1901, tfNum2000, tfNum2001);
+        calculateSum(tfNum1905, tfNum1903, tfNum1904, tfNum2003, tfNum2004);
+        calculateSum(tfNum1908, tfNum1906, tfNum1907, tfNum2006, tfNum2007);
+        calculateSum(tfNum1911, tfNum1909, tfNum1910, tfNum2009, tfNum2010);
+        calculateSum(tfNum1912, tfNum1902, tfNum1905, tfNum1908, tfNum1911);
     }
 
-    private void calculateTfNum1911() {
-        sum += Integer.parseInt(tfNum1909.getText());
-        sum += Integer.parseInt(tfNum1910.getText());
-        sum += Integer.parseInt(tfNum2009.getText());
-        sum += Integer.parseInt(tfNum2010.getText());
-        tfNum1911.setText(String.valueOf(sum));
-        sum = 0;
-    }
-
-    private void calculateTfNum1908() {
-        sum += Integer.parseInt(tfNum1906.getText());
-        sum += Integer.parseInt(tfNum1907.getText());
-        sum += Integer.parseInt(tfNum2006.getText());
-        sum += Integer.parseInt(tfNum2007.getText());
-        tfNum1908.setText(String.valueOf(sum));
-        sum = 0;
-    }
-
-    private void calculateTfNum1905() {
-        sum += Integer.parseInt(tfNum1903.getText());
-        sum += Integer.parseInt(tfNum1904.getText());
-        sum += Integer.parseInt(tfNum2003.getText());
-        sum += Integer.parseInt(tfNum2004.getText());
-        tfNum1905.setText(String.valueOf(sum));
-        sum = 0;
-    }
-
-    private void calculateTfNum1902() {
-        sum += Integer.parseInt(tfNum1900.getText());
-        sum += Integer.parseInt(tfNum1901.getText());
-        sum += Integer.parseInt(tfNum2000.getText());
-        sum += Integer.parseInt(tfNum2001.getText());
-        tfNum1902.setText(String.valueOf(sum));
-        sum = 0;
+    private void calculateSum(TextField resultField, TextField... fields) {
+        int sum = 0;
+        for (TextField field : fields) {
+            if (!field.getText().isEmpty()) {
+                sum += Integer.parseInt(field.getText());
+            }
+        }
+        resultField.setText(String.valueOf(sum));
     }
 
     public void revealExploreCard(ActionEvent actionEvent) {
         if (exploreDeck.isEmpty()) {
             DialogUtils.showDialog("Deck is empty", "You have explored all cards. \n Shuffling deck...",
                     Alert.AlertType.INFORMATION);
-            initializeExploreDeck();
+//            initializeExploreDeck();
+            exploreDeck = InitializeUtils.initializeExploreDeck();
             return;
         }
         drawnCard = exploreDeck.getFirst();
@@ -964,13 +290,14 @@ public class CartographyController {
             }
             dialogContent.append(shape.getDirections() + " ");
         }
-        DialogUtils.showDialog("Explore Card", dialogContent.toString(), Alert.AlertType.INFORMATION);
+        Platform.runLater(() -> DialogUtils.showDialog("Explore Card", dialogContent.toString(),
+                Alert.AlertType.INFORMATION));
 
         exploreDeck.removeFirst();
 
-        lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString());
-        lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString());
-        lblRotation.setText("0 degrees");
+        Platform.runLater(() -> lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString()));
+        Platform.runLater(() -> lblShape.setText(drawnCard.getShapes()[shapeIterator].getDirections().toString()));
+        Platform.runLater(() -> lblRotation.setText("0 degrees"));
 
         terrainIterator = 0;
     }
@@ -1000,98 +327,66 @@ public class CartographyController {
         GameMove gameMove = new GameMove(turnCount, SeasonEnum.valueOf(lblSeason.getText().toString()), position,
                 (int)slCoin.getValue());
         XmlUtils.saveNewMove(gameMove);
+
+        GameUtils.createGameAndSaveWithThread(gameMove);
+    }
+
+    private void setTimeline() {
+        Timeline showLastGameMoveTimeline = FileUtils.getLastGameMoveRefreshTimeline(lblLastGameMove);
+        showLastGameMoveTimeline.play();
     }
 
     private boolean checkMountainAdjacents() {
-        int allFilled = 0;
-//        btnMapB4.setDisable(false);
-//        btnMapC9.setDisable(false);
-//        btnMapF6.setDisable(false);
-//        btnMapI3.setDisable(false);
-//        btnMapJ8.setDisable(false);
-        for (Button btnMountain : mountains) {
+        Map<String, Button> buttonMap = gpMain.getChildren().stream()
+                .filter(Button.class::isInstance)
+                .map(Button.class::cast)
+                .collect(Collectors.toMap(Button::getId, button -> button));
+
+        Iterator<Button> iterator = mountains.iterator();
+
+        while (iterator.hasNext()) {
+            Button btnMountain = iterator.next();
             int row = Character.toUpperCase(btnMountain.getId().charAt(6)) - 'A' + 1;
             int col = Character.getNumericValue(btnMountain.getId().charAt(7));
-            for (Node node : gpMain.getChildren()) {
-                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 2) + col) && button.isDisabled()) {
+
+            int[][] directions = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+
+            int allFilled = 0;
+
+            for (int[] dir : directions) {
+                String adjacentId = "btnMap" + (char) ('A' + row + dir[0] - 1) + (col + dir[1]);
+                Button adjacentButton = buttonMap.get(adjacentId);
+
+                if (adjacentButton != null && adjacentButton.isDisabled()) {
                     allFilled++;
                     if (allFilled == 4) {
-                        mountains.remove(btnMountain);
+                        iterator.remove();
                         return true;
                     }
                 }
-                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row) + col) && button.isDisabled()) {
-                    allFilled++;
-                    if (allFilled == 4) {
-                        mountains.remove(btnMountain);
-                        return true;
-                    }
-                }
-                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col + 1)) && button.isDisabled()) {
-                    allFilled++;
-                    if (allFilled == 4) {
-                        mountains.remove(btnMountain);
-                        return true;
-                    }
-                }
-                if (node instanceof Button button && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col - 1)) && button.isDisabled()) {
-                    allFilled++;
-                    if (allFilled == 4) {
-                        mountains.remove(btnMountain);
-                        return true;
-                    }
-                }
-//                else return false;
             }
         }
-//        btnMapB4.setDisable(true);
-//        btnMapC9.setDisable(true);
-//        btnMapF6.setDisable(true);
-//        btnMapI3.setDisable(true);
-//        btnMapJ8.setDisable(true);
+
         return false;
     }
 
     private void checkEndOfSeason() {
         if (lblSeason.getText().equals(SeasonEnum.SPRING.name()) && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
-            lblSeason.setText(SeasonEnum.SUMMER.name());
-            DialogUtils.showDialog("End of season", "End of Spring season. \n" +
-                            "Summer season has started. Make sure to count your points according to 'A' and 'B' scoring cards",
-                    Alert.AlertType.INFORMATION);
-            lblTurnCount.setText("0");
+            UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringC, lblScoringA, lblScoringD);
             turnCount = 0;
-            lblScoringC.setFont(lblScoringA.getFont());
-            lblScoringA.setFont(lblScoringD.getFont());
         }
         if (lblSeason.getText().equals(SeasonEnum.SUMMER.name()) && (lblTurnCount.getText().equals("8") || lblTurnCount.getText().equals("9"))) {
-            lblSeason.setText(SeasonEnum.FALL.name());
-            DialogUtils.showDialog("End of season", "End of Summer season. \n" +
-                            "Fall season has started. Make sure to count your points according to 'B' and 'C' scoring" +
-                            " cards",
-                    Alert.AlertType.INFORMATION);
-            lblTurnCount.setText("0");
+            UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringD, lblScoringB, lblScoringA);
             turnCount = 0;
-            lblScoringD.setFont(lblScoringB.getFont());
-            lblScoringB.setFont(lblScoringA.getFont());
         }
         if (lblSeason.getText().equals(SeasonEnum.FALL.name()) && (lblTurnCount.getText().equals("7") || lblTurnCount.getText().equals("8"))) {
-            lblSeason.setText(SeasonEnum.WINTER.name());
-            DialogUtils.showDialog("End of season", "End of Fall season. \n" +
-                            "Winter season has started. Make sure to count your points according to 'C' and 'D' " +
-                            "scoring" +
-                            " cards",
-                    Alert.AlertType.INFORMATION);
-            lblTurnCount.setText("0");
+            UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringA, lblScoringC, lblScoringB);
             turnCount = 0;
-            lblScoringA.setFont(lblScoringC.getFont());
-            lblScoringC.setFont(lblScoringB.getFont());
         }
         if (lblSeason.getText().equals(SeasonEnum.WINTER.name()) && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
-            DialogUtils.showDialog("End of season", "End of Winter season. \n" +
-                            "The game has ended! Make sure to count your points according to 'D' and 'A' scoring" +
-                            " cards",
-                    Alert.AlertType.INFORMATION);
-            calculateTfNum1912();
+            UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringB, lblScoringD, lblScoringC);
+//            calculateTfNum1912();
+            calculateSum(tfNum1912, tfNum1902, tfNum1905, tfNum1908, tfNum1911);
             disableAllButtons();
         }
     }
@@ -1145,7 +440,7 @@ public class CartographyController {
                         return isLegal;
                     }
                 }
-            }
+            } else return false;
         }
         if (isLegal) {
             for (Button buttonDisable : buttons) {
@@ -1176,90 +471,42 @@ public class CartographyController {
         iconToButton.setBackground(bgIcon);
     }
 
-
     @Nullable
     private Map<Boolean, Map<String, Integer>> checkIfDisabled(String direction, int row, int col, ArrayList<Button> buttons) {
-        if (direction.equals("N")) {
-            return checkIfDisabledNorth(row, col, buttons);
-        } else if (direction.equals("E")) {
-            return checkIfDisabledEast(row, col, buttons);
-        }
-        else if (direction.equals("S")) {
-            return checkIfDisabledSouth(row, col, buttons);
-        } else if (direction.equals("W")) {
-            return checkIfDisabledWest(row, col, buttons);
-        }
-        return null;
-    }
+        Map<String, int[]> directionOffsets = Map.of(
+                "X", new int[]{0, 0},
+                "O", new int[]{0, 0},
+                "N", new int[]{-1, 0},
+                "E", new int[]{0, 1},
+                "S", new int[]{1, 0},
+                "W", new int[]{0, -1}
+        );
 
+        if (!directionOffsets.containsKey(direction)) {
+            return null;
+        }
 
-    @Nullable
-    private Map<Boolean, Map<String, Integer>> checkIfDisabledNorth(int row, int col, ArrayList<Button> buttons) {
+        int[] offset = directionOffsets.get(direction);
+        int newRow = row + offset[0];
+        int newCol = col + offset[1];
+
+        if (newRow < 0 || newRow >= GameUtils.NUMBER_OF_ROWS_COLUMNS + 1 || newCol < 0 || newCol >= GameUtils.NUMBER_OF_ROWS_COLUMNS + 1) {
+            return null;
+        }
+
+        String targetId = "btnMap" + (char) ('A' + newRow - 1) + newCol;
+
         for (Node node : gpMain.getChildren()) {
-            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 2) + col)) {
-
-                if (buttonFound != null && !buttonFound.isDisable()) {
+            if (node instanceof Button buttonFound && targetId.equals(node.getId())) {
+                if (!buttonFound.isDisable()) {
                     buttons.add(buttonFound);
-                    return Map.of(true, Map.of("row", row - 1));
+                    return Map.of(true, Map.of(offset[0] != 0 ? "row" : "col", offset[0] != 0 ? newRow : newCol));
                 } else {
-                    return Map.of(false, Map.of("row", row));
+                    return Map.of(false, Map.of(offset[0] != 0 ? "row" : "col", offset[0] != 0 ? row : col));
                 }
             }
         }
-        return null;
-    }
 
-    @Nullable
-    private Map<Boolean, Map<String, Integer>> checkIfDisabledEast(int row, int col, ArrayList<Button> buttons) {
-        for (Node node : gpMain.getChildren()) {
-            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col + 1))) {
-
-                if (buttonFound != null && !buttonFound.isDisable()) {
-                    buttons.add(buttonFound);
-                    return Map.of(true, Map.of("col", col + 1));
-                }
-                else {
-                    return Map.of(false, Map.of("col", col));
-
-                }
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private Map<Boolean, Map<String, Integer>> checkIfDisabledSouth(int row, int col, ArrayList<Button> buttons) {
-        for (Node node : gpMain.getChildren()) {
-            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row) + col)) {
-
-                if (buttonFound != null && !buttonFound.isDisable()) {
-                    buttons.add(buttonFound);
-                    return Map.of(true, Map.of("row", row + 1));
-                }
-                else {
-                    return Map.of(false, Map.of("row", row));
-
-                }
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private Map<Boolean, Map<String, Integer>> checkIfDisabledWest(int row, int col, ArrayList<Button> buttons) {
-        for (Node node : gpMain.getChildren()) {
-            if (node instanceof Button buttonFound && node.getId().equals("btnMap" + (char) ('A' + row - 1) + (col - 1))) {
-
-                if (buttonFound != null && !buttonFound.isDisable()) {
-                    buttons.add(buttonFound);
-                    return Map.of(true, Map.of("col", col - 1));
-                }
-                else {
-                    return Map.of(false, Map.of("col", col));
-
-                }
-            }
-        }
         return null;
     }
 
@@ -1278,239 +525,30 @@ public class CartographyController {
     }
 
     public void startNewGame(ActionEvent actionEvent) {
-////        GameState gState = generateGameState();
-////        GameState gState = new GameState(defaultGrid);
-////        GameUtils.startNewGame(gState);
-//        gpMain.getChildren().clear();
-//        GridPane newGrid = deepCopyGridPane(defaultGrid);
-////        gpMain = deepCopyGridPane(defaultGrid);
-//        gpMain.getChildren().addAll(newGrid.getChildren());
-//        initialize();
-
-        ArrayList<String> playerInfo = new ArrayList<>();
-        playerInfo.add(tfCartographer.getText());
-        playerInfo.add(tfPlayerTitle.getText());
-        playerInfo.add(tfKingdomName.getText());
-
-        ArrayList<String> scoringCardsGameState = new ArrayList<>(scoringCards);
-
-        ArrayList<String> exploreDeckGameState = new ArrayList<>();
-        for (CardsBase card : exploreDeck) {
-            StringBuilder exploreCard = new StringBuilder();
-            exploreCard.append(card.getPoints());
-            exploreCard.append("|");
-            exploreCard.append(card.getTitle());
-            exploreCard.append("|");
-            for (TerrainType terrainType : card.getTerrainType()) {
-                exploreCard.append(terrainType);
-                exploreCard.append(",");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getNumberOfShapes());
-            exploreCard.append("|");
-            for (ShapeOnMap shape : card.getShapes()) {
-                for (String direction : shape.getDirections()) {
-                    exploreCard.append(direction);
-                    exploreCard.append(",");
-                }
-                exploreCard.append(";");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
-            exploreDeckGameState.add(exploreCard.toString());
-        }
-
-        StringBuilder drawnCardGameState = new StringBuilder();
-        drawnCardGameState.append(drawnCard.getPoints());
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getTitle());
-        drawnCardGameState.append("|");
-        for (TerrainType terrainType : drawnCard.getTerrainType()) {
-            drawnCardGameState.append(terrainType);
-            drawnCardGameState.append(",");
-        }
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getNumberOfShapes());
-        drawnCardGameState.append("|");
-        for (ShapeOnMap shape : drawnCard.getShapes()) {
-            for (String direction : shape.getDirections()) {
-                drawnCardGameState.append(direction);
-                drawnCardGameState.append(",");
-            }
-            drawnCardGameState.append(";");
-        }
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getShapes()[0].getHasCoin() ? "true" : "false");
-
-        int turnCountGameState = turnCount;
-
-        SeasonEnum currentSeasonGameState = SeasonEnum.valueOf(lblSeason.getText());
-
-        ArrayList<String> mountainsGameState = new ArrayList<>();
-        for (Button mountain : mountains) {
-            StringBuilder mountainArea = new StringBuilder();
-            mountainArea.append(mountain.getId());
-            mountainArea.append("|");
-            mountainArea.append(mountain.isDisabled() ? "true" : "false");
-            mountainsGameState.add(mountainArea.toString());
-        }
-
-//        ArrayList<String> mapGameState = new ArrayList<>();
-//        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
-//        for (Button[] row : mapButtons) {
-//            for (Button button : row) {
-//                StringBuilder mapArea = new StringBuilder();
-//                mapArea.append(button.getId());
-//                mapArea.append("|");
-//                mapArea.append(button.isDisabled() ? "true" : "false");
-//                if (button.isDisable())
-//                {
-//                    mapArea.append("|");
-//                    mapArea.append(button.getBackground().toString());
-//                }
-//                mapGameState.add(mapArea.toString());
-//            }
-//        }
-        String[][] mapGameState = new String[11][11];
-        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
-        for (int i = 0; i < mapButtons.length; i++) {
-            for (int j = 0; j < mapButtons[i].length; j++) {
-                StringBuilder mapArea = new StringBuilder();
-                if (mapButtons[i][j] != null) {
-                    mapArea.append(mapButtons[i][j].getId());
-                    mapArea.append("|");
-                    mapArea.append(mapButtons[i][j].isDisabled() ? "true" : "false");
-                    if (mapButtons[i][j].isDisable())
-                    {
-                        mapArea.append("|");
-                        mapArea.append(mapButtons[i][j].getBackground().toString());
-                    }
-                }
-                else {
-//                    mapArea.append("btnMap" + (char) ('A' + i) + (j + 5));
-//                    mapArea.append("|");
-//                    mapArea.append("false");
-                    mapArea.append(pressedButtons.getFirst().split("\\|")[0]);
-                    mapArea.append("|");
-                    mapArea.append("true");
-                    mapArea.append("|");
-                    mapArea.append(pressedButtons.getFirst().split("\\|")[1]);
-                }
-                mapGameState[i][j] = mapArea.toString();
-            }
-        }
-//        for (Node node : gpMain.getChildren()) {
-//            if (node instanceof Button button) {
-//                StringBuilder mapArea = new StringBuilder();
-//                mapArea.append(button.getId());
-//                mapArea.append("|");
-//                mapArea.append(button.isDisabled() ? "true" : "false");
-//                mapGameState.add(mapArea.toString());
-//            }
-//        }
-
-        int coinCountGameState = (int) slCoin.getValue();
-
-//        ArrayList<String> pointsGameState = new ArrayList<>();
-//        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
-//        for (TextField[] row : points) {
-//            for (TextField textField : row) {
-//                StringBuilder pointsArea = new StringBuilder();
-//                pointsArea.append(textField.getId());
-//                pointsArea.append("|");
-//                pointsArea.append(textField.getText());
-//                pointsGameState.add(pointsArea.toString());
-//            }
-//        }
-
-        String[][] pointsGameState = new String[2][13];
-        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
-        for (int i = 0; i < points.length; i++) {
-            for (int j = 0; j < points[i].length; j++) {
-                StringBuilder pointsArea = new StringBuilder();
-                if (!(i == 1 && (j == 2 || j == 5 || j == 8 || j == 11 || j == 12))) {
-                    pointsArea.append(points[i][j].getId());
-                    pointsArea.append("|");
-                    pointsArea.append(points[i][j].getText());
-                    pointsGameState[i][j] = pointsArea.toString();
-                }
-            }
-        }
-
-        GameState gameState = new GameState(playerInfo, scoringCardsGameState, exploreDeckGameState,
-                drawnCardGameState.toString(), turnCountGameState, currentSeasonGameState, mountainsGameState,
-                mapGameState, coinCountGameState, pointsGameState, true);
-
-        GameUtils.startNewGame(gameState);
-
-
-        initialize();
     }
 
-    public static <T extends Node> T[][] extractFromGridPane(
-            GridPane sourceGrid,
-            int startRow,
-            int endRow,
-            int startCol,
-            int endCol,
-            Class<T> nodeType
-    ) {
+    public static <T extends Node> T[][] extractFromGridPane(GridPane sourceGrid, int startRow, int endRow,
+                                                             int startCol, int endCol, Class<T> nodeType) {
         int rows = endRow - startRow + 1;
         int cols = endCol - startCol + 1;
 
-        // Create a generic 2D array using reflection
         @SuppressWarnings("unchecked")
         T[][] nodes = (T[][]) java.lang.reflect.Array.newInstance(nodeType, rows, cols);
 
         for (Node node : sourceGrid.getChildren()) {
-            // Ensure the node is of the specified type
             if (nodeType.isInstance(node)) {
                 Integer rowIndex = GridPane.getRowIndex(node);
                 Integer colIndex = GridPane.getColumnIndex(node);
-
-                // Default to 0 if no index is set
                 rowIndex = (rowIndex == null) ? 0 : rowIndex;
                 colIndex = (colIndex == null) ? 0 : colIndex;
 
-                // Check if the node falls within the specified range
                 if (rowIndex >= startRow && rowIndex <= endRow && colIndex >= startCol && colIndex <= endCol) {
-                    // Add the node to the correct position in the array
                     nodes[rowIndex - startRow][colIndex - startCol] = nodeType.cast(node);
                 }
             }
         }
 
         return nodes;
-    }
-
-    private GameState generateGameState() {
-//        return new GameState(
-//                new ArrayList<>(Arrays.asList(tfCartographer, tfPlayerTitle, tfKingdomName)),
-//                scoringCards,
-//                exploreDeck,
-//                drawnCard,
-//                turnCount,
-//                SeasonEnum.valueOf(lblSeason.getText()),
-//                mountains,
-//                extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class),
-//                (int) slCoin.getValue(),
-//                extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class)
-//        );
-        /*
-        private ArrayList<String> player;
-    private String activeScoringLetters;
-    private ArrayList<String> scoringCards;
-    private ArrayList<CardsBase> exploreDeck;
-    private CardsBase drawnCard;
-    private int turnCount;
-    private SeasonEnum currentSeason;
-    private ArrayList<Button> mountains;
-    private Button[][] map;
-    private int coinCount;
-    private TextField[][] points;
-         */
-//        return new GameState(defaultGrid);
-        return null;
     }
 
     public void saveGame(ActionEvent actionEvent) {
@@ -1583,22 +621,6 @@ public class CartographyController {
             mountainsGameState.add(mountainArea.toString());
         }
 
-//        ArrayList<String> mapGameState = new ArrayList<>();
-//        Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 5, 15, Button.class);
-//        for (Button[] row : mapButtons) {
-//            for (Button button : row) {
-//                StringBuilder mapArea = new StringBuilder();
-//                mapArea.append(button.getId());
-//                mapArea.append("|");
-//                mapArea.append(button.isDisabled() ? "true" : "false");
-//                if (button.isDisable())
-//                {
-//                    mapArea.append("|");
-//                    mapArea.append(button.getBackground().toString());
-//                }
-//                mapGameState.add(mapArea.toString());
-//            }
-//        }
         String[][] mapGameState = new String[11][11];
         Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
         for (int i = 0; i < mapButtons.length; i++) {
@@ -1615,9 +637,6 @@ public class CartographyController {
                     }
                 }
                 else {
-//                    mapArea.append("btnMap" + (char) ('A' + i) + (j + 5));
-//                    mapArea.append("|");
-//                    mapArea.append("false");
                     mapArea.append(pressedButtons.getFirst().split("\\|")[0]);
                     mapArea.append("|");
                     mapArea.append("true");
@@ -1627,29 +646,8 @@ public class CartographyController {
                 mapGameState[i][j] = mapArea.toString();
             }
         }
-//        for (Node node : gpMain.getChildren()) {
-//            if (node instanceof Button button) {
-//                StringBuilder mapArea = new StringBuilder();
-//                mapArea.append(button.getId());
-//                mapArea.append("|");
-//                mapArea.append(button.isDisabled() ? "true" : "false");
-//                mapGameState.add(mapArea.toString());
-//            }
-//        }
 
         int coinCountGameState = (int) slCoin.getValue();
-
-//        ArrayList<String> pointsGameState = new ArrayList<>();
-//        TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
-//        for (TextField[] row : points) {
-//            for (TextField textField : row) {
-//                StringBuilder pointsArea = new StringBuilder();
-//                pointsArea.append(textField.getId());
-//                pointsArea.append("|");
-//                pointsArea.append(textField.getText());
-//                pointsGameState.add(pointsArea.toString());
-//            }
-//        }
 
         String[][] pointsGameState = new String[2][13];
         TextField[][] points = extractFromGridPane(gpMain, 19, 20, 0, 12, TextField.class);
@@ -1741,7 +739,6 @@ public class CartographyController {
         lblSeason.setText(loadedGame.getCurrentSeason().name());
         checkEndOfSeason();
 
-        // Might need fixing:
         mountains.clear();
         for (String mountain : loadedGame.getMountains()) {
             String[] mountainParts = mountain.split("\\|");

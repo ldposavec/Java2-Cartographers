@@ -1,7 +1,10 @@
 package hr.algebra.java2.cartographers.utils;
 
+import hr.algebra.java2.cartographers.model.GameMove;
 import hr.algebra.java2.cartographers.model.GameState;
+import hr.algebra.java2.cartographers.model.Position;
 import hr.algebra.java2.cartographers.model.SeasonEnum;
+import hr.algebra.java2.cartographers.thread.SaveLastGameMoveThread;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -10,8 +13,11 @@ import javafx.scene.control.TextField;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class GameUtils {
+    public static final int NUMBER_OF_ROWS_COLUMNS = 11;
+
     private GameUtils() {}
 
     private static final String SAVE_GAME_FILES_PATH = "game/save.dat";
@@ -108,6 +114,13 @@ public class GameUtils {
         Boolean newGame = gameState.getNewGame();
 
         return new GameState(playerInfo, scoringCards, exploreDeck, drawnCard, turnCount, currentSeason, mountains, map, coinCount, points, newGame);
+    }
+
+    public static void createGameAndSaveWithThread(GameMove gameMove) {
+        XmlUtils.saveNewMove(gameMove);
+        SaveLastGameMoveThread thread = new SaveLastGameMoveThread(gameMove);
+        Thread saveLastGameMoveThreadRunner = new Thread(thread);
+        saveLastGameMoveThreadRunner.start();
     }
 //    public static void startNewGame(GameState gState) {
 //        /*
