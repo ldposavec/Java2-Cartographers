@@ -17,10 +17,12 @@ import java.util.Optional;
 
 public class GameUtils {
     public static final int NUMBER_OF_ROWS_COLUMNS = 11;
+    public static Boolean isEndOfGame = false;
 
     private GameUtils() {}
 
     private static final String SAVE_GAME_FILES_PATH = "game/save.dat";
+    private static final String SAVE_MULTIPLAYER_FILES_PATH = "game/saveMultiplayer.dat";
 
 //    private ArrayList<String> playerInfo;
 //    private ArrayList<String> scoringCards;
@@ -78,9 +80,41 @@ public class GameUtils {
         }
     }
 
+    public static void saveMultiplayer(GameState gameState) {
+        File saveFile = new File(SAVE_MULTIPLAYER_FILES_PATH);
+
+        if (!saveFile.getParentFile().exists()) {
+            saveFile.getParentFile().mkdirs();
+        }
+        if (!saveFile.exists()) {
+            try {
+                saveFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_MULTIPLAYER_FILES_PATH))) {
+            oos.writeObject(gameState);
+        } catch (IOException e) {
+            System.out.println("Error saving game: " + e.getMessage());
+        }
+    }
+
     public static GameState loadGame() {
         GameState loadedGameState;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_GAME_FILES_PATH))) {
+            loadedGameState = (GameState) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Error loading game: " + e.getMessage());
+            return null;
+        }
+
+        return loadedGameState;
+    }
+
+    public static GameState loadMultiplayer() {
+        GameState loadedGameState;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_MULTIPLAYER_FILES_PATH))) {
             loadedGameState = (GameState) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error loading game: " + e.getMessage());
@@ -121,6 +155,14 @@ public class GameUtils {
         SaveLastGameMoveThread thread = new SaveLastGameMoveThread(gameMove);
         Thread saveLastGameMoveThreadRunner = new Thread(thread);
         saveLastGameMoveThreadRunner.start();
+    }
+
+    public static GameState loadGameState(GameState gameState) {
+        return gameState;
+    }
+
+    public static void isEndOfGame(Boolean endOfGame) {
+        isEndOfGame = endOfGame;
     }
 //    public static void startNewGame(GameState gState) {
 //        /*

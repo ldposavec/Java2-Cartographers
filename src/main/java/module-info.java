@@ -12,9 +12,13 @@ module hr.algebra.java2.cartographers {
     requires static lombok;
     requires jdk.internal.le;
     requires java.xml;
+    requires java.naming;
+    requires java.rmi;
+    requires java.logging;
 
     opens hr.algebra.java2.cartographers to javafx.fxml;
     exports hr.algebra.java2.cartographers;
     exports  hr.algebra.java2.cartographers.controllers;
     opens hr.algebra.java2.cartographers.controllers to javafx.fxml;
+    exports hr.algebra.java2.cartographers.model;
 }

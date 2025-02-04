@@ -1,5 +1,6 @@
 package hr.algebra.java2.cartographers.controllers;
 
+import hr.algebra.java2.cartographers.CartographyApplication;
 import hr.algebra.java2.cartographers.model.*;
 import hr.algebra.java2.cartographers.thread.SaveLastGameMoveThread;
 import hr.algebra.java2.cartographers.utils.*;
@@ -112,7 +113,7 @@ public class CartographyController {
     private Label lblLastGameMove;
 
     private int lastNum = 0;
-    private ArrayList<CardsBase> exploreDeck;
+    public static ArrayList<CardsBase> exploreDeck;
     private CardsBase drawnCard;
     private int terrainIterator = 0;
     private int shapeIterator = 0;
@@ -121,6 +122,7 @@ public class CartographyController {
     private ArrayList<String> pressedButtons = new ArrayList<>();
     private Boolean hasCoin = false;
     private ArrayList<Button> mountains = new ArrayList<>();
+    public PlayerType loggedInPlayer = CartographyApplication.loggedInPlayer.getPlayerType();
     private ArrayList<String> scoringCards = new ArrayList<>(Arrays.asList("Earn one reputation star for each row and" +
                     " column with at least one forest space. The same forest space may be scored in a row and a column.",
             "Earn two reputation stars for each water space adjacent to a mountain space. Earn one reputation star " +
@@ -329,6 +331,36 @@ public class CartographyController {
         XmlUtils.saveNewMove(gameMove);
 
         GameUtils.createGameAndSaveWithThread(gameMove);
+        ArrayList<String> sendExploreDeck = new ArrayList<>();
+        for (CardsBase card : exploreDeck) {
+            StringBuilder exploreCard = new StringBuilder();
+            exploreCard.append(card.getPoints());
+            exploreCard.append("|");
+            exploreCard.append(card.getTitle());
+            exploreCard.append("|");
+            for (TerrainType terrainType : card.getTerrainType()) {
+                exploreCard.append(terrainType);
+                exploreCard.append(",");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getNumberOfShapes());
+            exploreCard.append("|");
+            for (ShapeOnMap shape : card.getShapes()) {
+                for (String direction : shape.getDirections()) {
+                    exploreCard.append(direction);
+                    exploreCard.append(",");
+                }
+                exploreCard.append(";");
+            }
+            exploreCard.append("|");
+            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
+            sendExploreDeck.add(exploreCard.toString());
+        }
+        if (CartographyApplication.loggedInPlayer.getPlayerType().name().equals(PlayerType.PLAYER_1.name())) {
+            CartographyApplication.sendRequestFromPlayerOne(tfCartographer.getText());
+        } else if (CartographyApplication.loggedInPlayer.getPlayerType().name().equals(PlayerType.PLAYER_2.name())) {
+            CartographyApplication.sendRequestFromPlayerTwo(tfCartographer.getText());
+        }
     }
 
     private void setTimeline() {
@@ -385,13 +417,13 @@ public class CartographyController {
         }
         if (lblSeason.getText().equals(SeasonEnum.WINTER.name()) && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
             UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringB, lblScoringD, lblScoringC);
-//            calculateTfNum1912();
             calculateSum(tfNum1912, tfNum1902, tfNum1905, tfNum1908, tfNum1911);
+            GameUtils.isEndOfGame(true);
             disableAllButtons();
         }
     }
 
-    private void disableAllButtons() {
+    public void disableAllButtons() {
         for (Node node : gpMain.getChildren()) {
             if (node instanceof Button button) {
                 if (button.getId().equals(btnScoringInfo.getId())) {

@@ -3,6 +3,8 @@ package hr.algebra.java2.cartographers.model;
 import lombok.Data;
 import lombok.Getter;
 
+import java.io.Serializable;
+
 @Data
 @Getter
 public class CardsBase {
