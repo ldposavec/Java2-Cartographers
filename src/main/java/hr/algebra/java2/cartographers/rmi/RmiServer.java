@@ -20,7 +20,10 @@ public class RmiServer {
             ChatRemoteService chatRemoteService = new ChatRemoteServiceImpl();
             ChatRemoteService skeleton = (ChatRemoteService) UnicastRemoteObject.exportObject(chatRemoteService, RANDMON_PORT_HINT);
             registry.rebind(ChatRemoteService.REMOTE_OBJECT_NAME, skeleton);
-            logger.info("RMI server started");
+            System.out.println("Object registered in RMI registry");
+            while (true) {
+
+            }
         } catch (RemoteException e) {
             logger.severe(e.getMessage());
         }

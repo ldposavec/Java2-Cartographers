@@ -22,19 +22,6 @@ public class GameUtils {
     private GameUtils() {}
 
     private static final String SAVE_GAME_FILES_PATH = "game/save.dat";
-    private static final String SAVE_MULTIPLAYER_FILES_PATH = "game/saveMultiplayer.dat";
-
-//    private ArrayList<String> playerInfo;
-//    private ArrayList<String> scoringCards;
-//    private ArrayList<String> exploreDeck;
-//    private String drawnCard;
-//    private int turnCount;
-//    private SeasonEnum currentSeason;
-//    private ArrayList<String> mountains;
-//    private String[][] map;
-//    private int coinCount;
-//    private String[][] points;
-//    private Boolean newGame;
 
     public static void startNewGame(GameState gameState) {
         gameState.getPlayerInfo().forEach(tf -> tf = "");
@@ -80,41 +67,9 @@ public class GameUtils {
         }
     }
 
-    public static void saveMultiplayer(GameState gameState) {
-        File saveFile = new File(SAVE_MULTIPLAYER_FILES_PATH);
-
-        if (!saveFile.getParentFile().exists()) {
-            saveFile.getParentFile().mkdirs();
-        }
-        if (!saveFile.exists()) {
-            try {
-                saveFile.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(SAVE_MULTIPLAYER_FILES_PATH))) {
-            oos.writeObject(gameState);
-        } catch (IOException e) {
-            System.out.println("Error saving game: " + e.getMessage());
-        }
-    }
-
     public static GameState loadGame() {
         GameState loadedGameState;
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_GAME_FILES_PATH))) {
-            loadedGameState = (GameState) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading game: " + e.getMessage());
-            return null;
-        }
-
-        return loadedGameState;
-    }
-
-    public static GameState loadMultiplayer() {
-        GameState loadedGameState;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_MULTIPLAYER_FILES_PATH))) {
             loadedGameState = (GameState) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Error loading game: " + e.getMessage());
@@ -156,63 +111,4 @@ public class GameUtils {
         Thread saveLastGameMoveThreadRunner = new Thread(thread);
         saveLastGameMoveThreadRunner.start();
     }
-
-    public static GameState loadGameState(GameState gameState) {
-        return gameState;
-    }
-
-    public static void isEndOfGame(Boolean endOfGame) {
-        isEndOfGame = endOfGame;
-    }
-//    public static void startNewGame(GameState gState) {
-//        /*
-//        private ArrayList<TextField> player;
-////    private String activeScoringLetters;
-//    private ArrayList<String> scoringCards;
-//    private ArrayList<CardsBase> exploreDeck;
-//    private CardsBase drawnCard;
-//    private int turnCount;
-//    private SeasonEnum currentSeason;
-//    private ArrayList<Button> mountains;
-//    private Button[][] map;
-//    private int coinCount;
-//    private TextField[][] points;
-//         */
-//        TextField tfCartographer = gState.getPlayer().getFirst();
-//        gState.getPlayer().removeFirst();
-//        tfCartographer.setText("");
-//        TextField tfPlayerTitle = gState.getPlayer().getFirst();
-//        gState.getPlayer().removeFirst();
-//        tfPlayerTitle.setText("");
-//        TextField tfKingdomName = gState.getPlayer().getFirst();
-//        gState.getPlayer().removeFirst();
-//        tfKingdomName.setText("");
-//
-//        gState.setPlayer(new ArrayList<>(Arrays.asList(tfCartographer, tfPlayerTitle, tfKingdomName)));
-//        gState.setScoringCards(gState.getScoringCards());
-//        gState.setExploreDeck(gState.getExploreDeck());
-//        gState.setDrawnCard(null);
-//        gState.setTurnCount(0);
-//        gState.setCurrentSeason(SeasonEnum.SPRING);
-//        gState.setMountains(gState.getMountains());
-//        gState.setMap(gState.getMap());
-//        gState.setCoinCount(0);
-//        gState.setPoints(gState.getPoints());
-//    }
-
-//    public static void startNewGame(GameState gState) {
-//        gState.getGrid().getChildren().forEach(node -> {
-//            if (node instanceof TextField) {
-//                if (((TextField) node).getId().contains("tfNum")) {
-//                    ((TextField) node).setText("0");
-//                }
-//                ((TextField) node).setText("");
-//            } else if (node instanceof Button) {
-//                ((Button) node).setDisable(false);
-//                ((Button) node).setBackground(null);
-//            } else if (node instanceof Slider) {
-//                ((Slider) node).setValue(0);
-//            }
-//        });
-//    }
 }

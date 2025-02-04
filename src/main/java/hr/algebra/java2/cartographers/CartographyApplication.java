@@ -7,6 +7,7 @@ import hr.algebra.java2.cartographers.model.CardsBase;
 import hr.algebra.java2.cartographers.model.GameState;
 import hr.algebra.java2.cartographers.model.LoggedInPlayerGameContext;
 import hr.algebra.java2.cartographers.model.PlayerType;
+import hr.algebra.java2.cartographers.utils.CardsBaseUtils;
 import hr.algebra.java2.cartographers.utils.DialogUtils;
 import hr.algebra.java2.cartographers.utils.GameUtils;
 import javafx.application.Application;
@@ -22,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -87,52 +89,49 @@ public class CartographyApplication extends Application {
     private static void processSerializableClient(final Socket clientSocket) {
         try (ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
              ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream())) {
-//            ArrayList<String> sentExploreDeck = (ArrayList<String>) ois.readObject();
-//            GameState gameStateToSave = GameUtils.generateGameState(gameState);
-//            GameUtils.saveMultiplayer(gameStateToSave);
-//            for (String card : sentExploreDeck) {
-//                String[] cardParts = card.split("\\|");
-//                CardsBase.Builder builder = new CardsBase.Builder();
-//
-//            }
-            String playerName = (String) ois.readObject();
-
+            Map<String, Map<ArrayList<String>, String>> sentMap = (Map<String, Map<ArrayList<String>, String>>) ois.readObject();
+            CartographyController.exploreDeck.clear();
+            CardsBaseUtils.stringToExploreDeck(sentMap.values().iterator().next().keySet().iterator().next(),
+                    CartographyController.exploreDeck);
+            CartographyController.drawnCard = CardsBaseUtils.stringToDrawnCard(sentMap.values().iterator().next().values().iterator().next());
 //            Boolean endOfGame = GameUtils.isEndOfGame;
             Platform.runLater(() -> DialogUtils.showDialog("Change turns",
-                    playerName + " just played his turn.", Alert.AlertType.INFORMATION));
+                    sentMap.keySet().iterator().next() + " just played his turn.", Alert.AlertType.INFORMATION));
             oos.writeObject("Success");
         } catch (IOException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
-    public static void sendRequestFromPlayerOne(final String playerName) {
+    public static void sendRequestFromPlayerOne(final String playerName, ArrayList<String> sentExploreDeck, String drawnCard) {
         try (Socket socket = new Socket(ConfigurationReader.getStringValueForKey(ConfigurationKey.HOSTNAME),
                 ConfigurationReader.getIntValueForKey(ConfigurationKey.PLAYER_2_SERVER_PORT))) {
             logger.log(Level.INFO, "Connecting to: " + socket.getInetAddress() + ":" + socket.getPort());
 
-            sendSerializableRequest(socket, playerName);
+            sendSerializableRequest(socket, playerName, sentExploreDeck, drawnCard);
         } catch (IOException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
-    public static void sendRequestFromPlayerTwo(final String playerName) {
+    public static void sendRequestFromPlayerTwo(final String playerName, ArrayList<String> sentExploreDeck, String drawnCard) {
         try (Socket socket = new Socket(ConfigurationReader.getStringValueForKey(ConfigurationKey.HOSTNAME),
                 ConfigurationReader.getIntValueForKey(ConfigurationKey.PLAYER_1_SERVER_PORT))) {
             logger.log(Level.INFO, "Connecting to: " + socket.getInetAddress() + ":" + socket.getPort());
 
-            sendSerializableRequest(socket, playerName);
+            sendSerializableRequest(socket, playerName, sentExploreDeck, drawnCard);
         } catch (IOException | ClassNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage());
         }
     }
 
-    private static void sendSerializableRequest(Socket socket, String playerName) throws IOException,
+    private static void sendSerializableRequest(Socket socket, String playerName, ArrayList<String> sentExploreDeck,
+     String drawnCard                                           ) throws IOException,
             ClassNotFoundException {
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-        oos.writeObject(playerName);
+        Map<String, Map<ArrayList<String>, String>> sentMap = Map.of(playerName, Map.of(sentExploreDeck, drawnCard));
+        oos.writeObject(sentMap);
         logger.log(Level.INFO, "Sent game state to player");
         logger.log(Level.INFO, "Response: " + ois.readObject());
     }

@@ -21,4 +21,5 @@ module hr.algebra.java2.cartographers {
     exports  hr.algebra.java2.cartographers.controllers;
     opens hr.algebra.java2.cartographers.controllers to javafx.fxml;
     exports hr.algebra.java2.cartographers.model;
+    exports hr.algebra.java2.cartographers.rmi to java.rmi;
 }

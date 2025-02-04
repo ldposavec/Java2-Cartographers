@@ -32,7 +32,7 @@ public class MainMenuController {
         Parent root = fxmlLoader.load();
         Stage stage = new Stage();
         stage.setTitle(title);
-        stage.setScene(new Scene(root, 600, 1000));
+        stage.setScene(new Scene(root, 780, 1050));
         stage.show();
     }
 

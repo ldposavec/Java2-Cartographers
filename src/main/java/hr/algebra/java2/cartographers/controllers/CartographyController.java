@@ -2,6 +2,7 @@ package hr.algebra.java2.cartographers.controllers;
 
 import hr.algebra.java2.cartographers.CartographyApplication;
 import hr.algebra.java2.cartographers.model.*;
+import hr.algebra.java2.cartographers.rmi.ChatRemoteService;
 import hr.algebra.java2.cartographers.thread.SaveLastGameMoveThread;
 import hr.algebra.java2.cartographers.utils.*;
 import javafx.animation.Timeline;
@@ -111,14 +112,18 @@ public class CartographyController {
     private TextField tfKingdomName;
     @FXML
     private Label lblLastGameMove;
+    @FXML
+    private Button btnChatMessage;
+    @FXML
+    private TextField tfChatMessage;
+    @FXML
+    private TextArea taChatMessage;
 
+    private ChatRemoteService chatRemoteService;
     private int lastNum = 0;
     public static ArrayList<CardsBase> exploreDeck;
-    private CardsBase drawnCard;
-    private int terrainIterator = 0;
-    private int shapeIterator = 0;
-    private int rotationIterator = 0;
-    private int turnCount = 0;
+    public static CardsBase drawnCard;
+    private int terrainIterator = 0, shapeIterator = 0, rotationIterator = 0, turnCount = 0;
     private ArrayList<String> pressedButtons = new ArrayList<>();
     private Boolean hasCoin = false;
     private ArrayList<Button> mountains = new ArrayList<>();
@@ -136,7 +141,7 @@ public class CartographyController {
 
         textFields.forEach(this::addNumericValidationListener);
 
-        initializeMountains();
+        InitializeUtils.initializeMountains(mountains, btnMapB4, btnMapC9, btnMapF6, btnMapI3, btnMapJ8);
         exploreDeck = InitializeUtils.initializeExploreDeck();
 
         gpMain.addEventFilter(KeyEvent.KEY_PRESSED, this::addKeyListeners);
@@ -144,7 +149,22 @@ public class CartographyController {
 
         lblSeason.setText(SeasonEnum.SPRING.name());
 
+        setUpChat();
+
         setTimeline();
+    }
+
+    private void setUpChat() {
+        if (!CartographyApplication.loggedInPlayer.getPlayerType().name().equals(PlayerType.SINGLE_PLAYER.name())) {
+            Optional<ChatRemoteService> chatRemoteServiceOptional = ChatUtils.initializeChatRemoteService();
+            chatRemoteServiceOptional.ifPresent(remoteService -> chatRemoteService = remoteService);
+            Timeline chatRefreshTimeline = ChatUtils.getChatRefreshTimeline(chatRemoteService, taChatMessage);
+            chatRefreshTimeline.play();
+        } else {
+            btnChatMessage.setVisible(false);
+            tfChatMessage.setVisible(false);
+            taChatMessage.setVisible(false);
+        }
     }
 
     public void addKeyListeners(KeyEvent event) {
@@ -187,38 +207,6 @@ public class CartographyController {
         }
         System.out.println("Terrain iterator: " + terrainIterator);
         Platform.runLater(() -> lblTerrain.setText(drawnCard.getTerrainType()[terrainIterator].toString()));
-    }
-
-    private void initializeMountains() {
-        BackgroundImage mountainIcon =
-                new BackgroundImage(new Image(getClass().getResource("/img/mountain-icon-hires.PNG").toExternalForm()
-                        , btnMapB4.heightProperty().doubleValue(), btnMapB4.widthProperty().doubleValue(), false,
-                        true, true),
-                        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                        new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
-        Background mountain = new Background(mountainIcon);
-
-        if (!mountains.isEmpty())
-        {
-            mountains.clear();
-        }
-
-        mountains.add(btnMapB4);
-        mountains.add(btnMapC9);
-        mountains.add(btnMapF6);
-        mountains.add(btnMapI3);
-        mountains.add(btnMapJ8);
-
-        btnMapB4.setBackground(mountain);
-        btnMapB4.setDisable(true);
-        btnMapC9.setBackground(mountain);
-        btnMapC9.setDisable(true);
-        btnMapF6.setBackground(mountain);
-        btnMapF6.setDisable(true);
-        btnMapI3.setBackground(mountain);
-        btnMapI3.setDisable(true);
-        btnMapJ8.setBackground(mountain);
-        btnMapJ8.setDisable(true);
     }
 
     private void addNumericValidationListener(TextField textField) {
@@ -270,7 +258,6 @@ public class CartographyController {
         if (exploreDeck.isEmpty()) {
             DialogUtils.showDialog("Deck is empty", "You have explored all cards. \n Shuffling deck...",
                     Alert.AlertType.INFORMATION);
-//            initializeExploreDeck();
             exploreDeck = InitializeUtils.initializeExploreDeck();
             return;
         }
@@ -332,34 +319,13 @@ public class CartographyController {
 
         GameUtils.createGameAndSaveWithThread(gameMove);
         ArrayList<String> sendExploreDeck = new ArrayList<>();
-        for (CardsBase card : exploreDeck) {
-            StringBuilder exploreCard = new StringBuilder();
-            exploreCard.append(card.getPoints());
-            exploreCard.append("|");
-            exploreCard.append(card.getTitle());
-            exploreCard.append("|");
-            for (TerrainType terrainType : card.getTerrainType()) {
-                exploreCard.append(terrainType);
-                exploreCard.append(",");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getNumberOfShapes());
-            exploreCard.append("|");
-            for (ShapeOnMap shape : card.getShapes()) {
-                for (String direction : shape.getDirections()) {
-                    exploreCard.append(direction);
-                    exploreCard.append(",");
-                }
-                exploreCard.append(";");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
-            sendExploreDeck.add(exploreCard.toString());
-        }
+        CardsBaseUtils.exploreDeckToString(exploreDeck, sendExploreDeck);
         if (CartographyApplication.loggedInPlayer.getPlayerType().name().equals(PlayerType.PLAYER_1.name())) {
-            CartographyApplication.sendRequestFromPlayerOne(tfCartographer.getText());
+
+            CartographyApplication.sendRequestFromPlayerOne(tfCartographer.getText(), sendExploreDeck,
+                    CardsBaseUtils.drawnCardToString(drawnCard));
         } else if (CartographyApplication.loggedInPlayer.getPlayerType().name().equals(PlayerType.PLAYER_2.name())) {
-            CartographyApplication.sendRequestFromPlayerTwo(tfCartographer.getText());
+            CartographyApplication.sendRequestFromPlayerTwo(tfCartographer.getText(), sendExploreDeck, CardsBaseUtils.drawnCardToString(drawnCard));
         }
     }
 
@@ -418,7 +384,6 @@ public class CartographyController {
         if (lblSeason.getText().equals(SeasonEnum.WINTER.name()) && (lblTurnCount.getText().equals("6") || lblTurnCount.getText().equals("7"))) {
             UiUtils.newSeason(lblSeason, lblTurnCount, lblScoringB, lblScoringD, lblScoringC);
             calculateSum(tfNum1912, tfNum1902, tfNum1905, tfNum1908, tfNum1911);
-            GameUtils.isEndOfGame(true);
             disableAllButtons();
         }
     }
@@ -438,7 +403,7 @@ public class CartographyController {
         ArrayList<Button> buttons = new ArrayList<>();
         buttons.add(button);
         if (drawnCard.getShapes()[shapeIterator].getDirections().size() == 1) {
-            setIconToButton(button);
+            MapUtils.setIconToButton(button, drawnCard, terrainIterator);
             button.setDisable(true);
             return true;
         }
@@ -455,7 +420,7 @@ public class CartographyController {
                 skipButton = true;
                 continue;
             }
-            Map<Boolean, Map<String, Integer>> result = checkIfDisabled(direction, row, col, buttons);
+            Map<Boolean, Map<String, Integer>> result = MapUtils.checkIfDisabled(direction, row, col, buttons, gpMain);
             if (result != null) {
                 if (skipButton) {
                     buttons.removeLast();
@@ -475,71 +440,9 @@ public class CartographyController {
             } else return false;
         }
         if (isLegal) {
-            for (Button buttonDisable : buttons) {
-                StringBuilder sb = new StringBuilder();
-                sb.append(buttonDisable.getId());
-                sb.append("|");
-                sb.append(drawnCard.getTerrainType()[terrainIterator].toString());
-                pressedButtons.add(sb.toString());
-                setIconToButton(buttonDisable);
-                buttonDisable.setDisable(true);
-            }
+            MapUtils.terrainOnButtons(buttons, drawnCard, terrainIterator, pressedButtons);
         }
         return isLegal;
-    }
-
-    private void setIconToButton(Button iconToButton) {
-        TerrainType terrainType = drawnCard.getTerrainType()[terrainIterator];
-        BackgroundImage icon =
-                new BackgroundImage(new Image(getClass().getResource("/img/" + terrainType.toString().toLowerCase() +
-                        "-icon-hires" +
-                        ".PNG").toExternalForm()
-                        , btnMapB4.heightProperty().doubleValue(), btnMapB4.widthProperty().doubleValue(), false,
-                        true, true),
-                        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                        new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
-        Background bgIcon = new Background(icon);
-
-        iconToButton.setBackground(bgIcon);
-    }
-
-    @Nullable
-    private Map<Boolean, Map<String, Integer>> checkIfDisabled(String direction, int row, int col, ArrayList<Button> buttons) {
-        Map<String, int[]> directionOffsets = Map.of(
-                "X", new int[]{0, 0},
-                "O", new int[]{0, 0},
-                "N", new int[]{-1, 0},
-                "E", new int[]{0, 1},
-                "S", new int[]{1, 0},
-                "W", new int[]{0, -1}
-        );
-
-        if (!directionOffsets.containsKey(direction)) {
-            return null;
-        }
-
-        int[] offset = directionOffsets.get(direction);
-        int newRow = row + offset[0];
-        int newCol = col + offset[1];
-
-        if (newRow < 0 || newRow >= GameUtils.NUMBER_OF_ROWS_COLUMNS + 1 || newCol < 0 || newCol >= GameUtils.NUMBER_OF_ROWS_COLUMNS + 1) {
-            return null;
-        }
-
-        String targetId = "btnMap" + (char) ('A' + newRow - 1) + newCol;
-
-        for (Node node : gpMain.getChildren()) {
-            if (node instanceof Button buttonFound && targetId.equals(node.getId())) {
-                if (!buttonFound.isDisable()) {
-                    buttons.add(buttonFound);
-                    return Map.of(true, Map.of(offset[0] != 0 ? "row" : "col", offset[0] != 0 ? newRow : newCol));
-                } else {
-                    return Map.of(false, Map.of(offset[0] != 0 ? "row" : "col", offset[0] != 0 ? row : col));
-                }
-            }
-        }
-
-        return null;
     }
 
     public void showScoringInfo(ActionEvent actionEvent) {
@@ -554,9 +457,6 @@ public class CartographyController {
         dialogContent.append("D: " + scoringCards.getFirst() + "\n");
         scoringCards.removeFirst();
         DialogUtils.showDialog("Scoring", dialogContent.toString(), Alert.AlertType.INFORMATION);
-    }
-
-    public void startNewGame(ActionEvent actionEvent) {
     }
 
     public static <T extends Node> T[][] extractFromGridPane(GridPane sourceGrid, int startRow, int endRow,
@@ -593,65 +493,16 @@ public class CartographyController {
         ArrayList<String> scoringCardsGameState = new ArrayList<>(scoringCards);
 
         ArrayList<String> exploreDeckGameState = new ArrayList<>();
-        for (CardsBase card : exploreDeck) {
-            StringBuilder exploreCard = new StringBuilder();
-            exploreCard.append(card.getPoints());
-            exploreCard.append("|");
-            exploreCard.append(card.getTitle());
-            exploreCard.append("|");
-            for (TerrainType terrainType : card.getTerrainType()) {
-                exploreCard.append(terrainType);
-                exploreCard.append(",");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getNumberOfShapes());
-            exploreCard.append("|");
-            for (ShapeOnMap shape : card.getShapes()) {
-                for (String direction : shape.getDirections()) {
-                    exploreCard.append(direction);
-                    exploreCard.append(",");
-                }
-                exploreCard.append(";");
-            }
-            exploreCard.append("|");
-            exploreCard.append(card.getShapes()[0].getHasCoin() ? "true" : "false");
-            exploreDeckGameState.add(exploreCard.toString());
-        }
+        CardsBaseUtils.exploreDeckToString(exploreDeck, exploreDeckGameState);
 
-        StringBuilder drawnCardGameState = new StringBuilder();
-        drawnCardGameState.append(drawnCard.getPoints());
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getTitle());
-        drawnCardGameState.append("|");
-        for (TerrainType terrainType : drawnCard.getTerrainType()) {
-            drawnCardGameState.append(terrainType);
-            drawnCardGameState.append(",");
-        }
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getNumberOfShapes());
-        drawnCardGameState.append("|");
-        for (ShapeOnMap shape : drawnCard.getShapes()) {
-            for (String direction : shape.getDirections()) {
-                drawnCardGameState.append(direction);
-                drawnCardGameState.append(",");
-            }
-            drawnCardGameState.append(";");
-        }
-        drawnCardGameState.append("|");
-        drawnCardGameState.append(drawnCard.getShapes()[0].getHasCoin() ? "true" : "false");
+        String drawnCardGameState = CardsBaseUtils.drawnCardToString(drawnCard);
 
         int turnCountGameState = turnCount;
 
         SeasonEnum currentSeasonGameState = SeasonEnum.valueOf(lblSeason.getText());
 
         ArrayList<String> mountainsGameState = new ArrayList<>();
-        for (Button mountain : mountains) {
-            StringBuilder mountainArea = new StringBuilder();
-            mountainArea.append(mountain.getId());
-            mountainArea.append("|");
-            mountainArea.append(mountain.isDisabled() ? "true" : "false");
-            mountainsGameState.add(mountainArea.toString());
-        }
+        MapUtils.fromMountainsToString(mountains, mountainsGameState);
 
         String[][] mapGameState = new String[11][11];
         Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
@@ -696,7 +547,7 @@ public class CartographyController {
         }
 
         GameState gameState = new GameState(playerInfo, scoringCardsGameState, exploreDeckGameState,
-                drawnCardGameState.toString(), turnCountGameState, currentSeasonGameState, mountainsGameState,
+                drawnCardGameState, turnCountGameState, currentSeasonGameState, mountainsGameState,
                 mapGameState, coinCountGameState, pointsGameState, true);
 
         GameState gameStateToSave = GameUtils.generateGameState(gameState);
@@ -713,57 +564,9 @@ public class CartographyController {
         scoringCards = loadedGame.getScoringCards();
 
         exploreDeck.clear();
-        for (String card : loadedGame.getExploreDeck()) {
-            String[] cardParts = card.split("\\|");
-            CardsBase.Builder cardBuilder = new CardsBase.Builder();
-            cardBuilder.setPoints(Integer.parseInt(cardParts[0]));
-            cardBuilder.setTitle(cardParts[1]);
-            String[] terrainTypes = cardParts[2].split(",");
-            TerrainType[] terrainTypesArray = new TerrainType[terrainTypes.length];
-            for (int i = 0; i < terrainTypes.length; i++) {
-                terrainTypesArray[i] = TerrainType.valueOf(terrainTypes[i]);
-            }
-            cardBuilder.setTerrainType(terrainTypesArray);
-            cardBuilder.setNumberOfShapes(Integer.parseInt(cardParts[3]));
-            String[] shapes = cardParts[4].split(";");
-            ShapeOnMap[] shapesArray = new ShapeOnMap[shapes.length];
-            for (int i = 0; i < shapes.length; i++) {
-                String[] directions = shapes[i].split(",");
-                ArrayList<String> directionsList = new ArrayList<>(Arrays.asList(directions));
-                if (i == 0 && Boolean.parseBoolean(cardParts[5])) {
-                    shapesArray[i] = new ShapeOnMap(directionsList, true);
-                } else {
-                    shapesArray[i] = new ShapeOnMap(directionsList, false);
-                }
-            }
-            cardBuilder.setShapes(shapesArray);
-            exploreDeck.add(cardBuilder.build());
-        }
+        CardsBaseUtils.stringToExploreDeck(loadedGame.getExploreDeck(), exploreDeck);
 
-        String[] drawnCardParts = loadedGame.getDrawnCard().split("\\|");
-        CardsBase.Builder drawnCardBuilder = new CardsBase.Builder();
-        drawnCardBuilder.setPoints(Integer.parseInt(drawnCardParts[0]));
-        drawnCardBuilder.setTitle(drawnCardParts[1]);
-        String[] terrainTypes = drawnCardParts[2].split(",");
-        TerrainType[] terrainTypesArray = new TerrainType[terrainTypes.length];
-        for (int i = 0; i < terrainTypes.length; i++) {
-            terrainTypesArray[i] = TerrainType.valueOf(terrainTypes[i]);
-        }
-        drawnCardBuilder.setTerrainType(terrainTypesArray);
-        drawnCardBuilder.setNumberOfShapes(Integer.parseInt(drawnCardParts[3]));
-        String[] shapes = drawnCardParts[4].split(";");
-        ShapeOnMap[] shapesArray = new ShapeOnMap[shapes.length];
-        for (int i = 0; i < shapes.length; i++) {
-            String[] directions = shapes[i].split(",");
-            ArrayList<String> directionsList = new ArrayList<>(Arrays.asList(directions));
-            if (i == 0 && Boolean.parseBoolean(drawnCardParts[5])) {
-                shapesArray[i] = new ShapeOnMap(directionsList, true);
-            } else {
-                shapesArray[i] = new ShapeOnMap(directionsList, false);
-            }
-        }
-        drawnCardBuilder.setShapes(shapesArray);
-        drawnCard = drawnCardBuilder.build();
+        drawnCard = CardsBaseUtils.stringToDrawnCard(loadedGame.getDrawnCard());
 
         turnCount = loadedGame.getTurnCount();
         lblTurnCount.setText(String.valueOf(turnCount));
@@ -772,13 +575,7 @@ public class CartographyController {
         checkEndOfSeason();
 
         mountains.clear();
-        for (String mountain : loadedGame.getMountains()) {
-            String[] mountainParts = mountain.split("\\|");
-            Button mountainButton = new Button();
-            mountainButton.setId(mountainParts[0]);
-            mountainButton.setDisable(Boolean.parseBoolean(mountainParts[1]));
-            mountains.add(mountainButton);
-        }
+        MapUtils.fromStringToMountains(loadedGame.getMountains(), mountains);
 
         Button[][] mapButtons = extractFromGridPane(gpMain, 5, 15, 1, 11, Button.class);
         for (int i = 0; i < mapButtons.length; i++) {
@@ -818,15 +615,16 @@ public class CartographyController {
         }
     }
 
-    public void replayGame(ActionEvent actionEvent) {
-    }
-
     public void generateDocumentation(ActionEvent actionEvent) {
         try {
             DocumentationUtils.generateHtmlDocumentationFile();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendChatMessage(ActionEvent actionEvent) {
+        ChatUtils.sendChatMessage(chatRemoteService, tfChatMessage);
     }
 }
 

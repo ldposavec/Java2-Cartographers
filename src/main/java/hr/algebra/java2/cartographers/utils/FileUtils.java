@@ -18,17 +18,6 @@ public class FileUtils {
     public static final String GAME_MOVE_HISTORY_FILE_NAME = "dat/gameMoves.dat";
     public static final AtomicBoolean FILE_ACCESS_IN_PROGRESS = new AtomicBoolean(false);
 
-    public static Optional<Position> getGridPosition(Button button, Button[][] gridMap) {
-        for (int i = 0; i < gridMap.length; i++) {
-            for (int j = 0; j < gridMap[i].length; j++) {
-                if (gridMap[i][j] == button) {
-                    return Optional.of(new Position(i, j));
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
     public static Timeline getLastGameMoveRefreshTimeline(Label label) {
         Timeline showLastGameMoveTimeline = new Timeline(new KeyFrame(Duration.ZERO, e -> {
             ReadLastGameMoveThread thread = new ReadLastGameMoveThread(label);

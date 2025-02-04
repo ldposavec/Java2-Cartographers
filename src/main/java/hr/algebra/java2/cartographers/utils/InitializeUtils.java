@@ -3,6 +3,9 @@ package hr.algebra.java2.cartographers.utils;
 import hr.algebra.java2.cartographers.model.CardsBase;
 import hr.algebra.java2.cartographers.model.ShapeOnMap;
 import hr.algebra.java2.cartographers.model.TerrainType;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -306,4 +309,36 @@ public class InitializeUtils {
 
         return exploreDeck;
     }
-}
+
+    public static void initializeMountains(ArrayList<Button> mountains, Button btnMapB4, Button btnMapC9, Button btnMapF6, Button btnMapI3, Button btnMapJ8) {
+            BackgroundImage mountainIcon =
+                    new BackgroundImage(new Image(InitializeUtils.class.getResource("/img/mountain-icon-hires.PNG").toExternalForm()
+                            , btnMapB4.heightProperty().doubleValue(), btnMapB4.widthProperty().doubleValue(), false,
+                            true, true),
+                            BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                            new BackgroundSize(btnMapB4.getWidth(), btnMapB4.getHeight(), true, true, true, false));
+            Background mountain = new Background(mountainIcon);
+
+            if (!mountains.isEmpty())
+            {
+                mountains.clear();
+            }
+
+            mountains.add(btnMapB4);
+            mountains.add(btnMapC9);
+            mountains.add(btnMapF6);
+            mountains.add(btnMapI3);
+            mountains.add(btnMapJ8);
+
+            btnMapB4.setBackground(mountain);
+            btnMapB4.setDisable(true);
+            btnMapC9.setBackground(mountain);
+            btnMapC9.setDisable(true);
+            btnMapF6.setBackground(mountain);
+            btnMapF6.setDisable(true);
+            btnMapI3.setBackground(mountain);
+            btnMapI3.setDisable(true);
+            btnMapJ8.setBackground(mountain);
+            btnMapJ8.setDisable(true);
+        }
+    }
